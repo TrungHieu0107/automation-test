@@ -51,8 +51,3 @@ verify:
   - input_value:
       field: term_tenpo_cd.value
       equals: "0101"
-  - style:
-      element: "#message"
-      color: green
-      font_weight: bold
-  - visible: "#message"

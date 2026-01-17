@@ -1,8 +1,10 @@
-# Smoke Test - Quick validation of critical features
+# Smoke Test Suite
 
 test_list:
-  - file: tests/scenarios/create-denpyo.yaml
+  - name: "Create Denpyo Test"
+    file: scenarios/create-denpyo.yaml
   
-  - file: tests/scenarios/search.yaml
+  - name: "Search and Approve Workflow"
+    file: scenarios/search.yaml
     children:
-      - file: tests/scenarios/approve.yaml
+      - file: scenarios/approve.yaml

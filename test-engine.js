@@ -164,7 +164,7 @@ class TestEngine {
 			await this.runYamlScenarioTests(yamlPath)
 		}
 	}
-	
+
 	/**
 	 * Runs tests from a YAML test list file
 	 * @param {string} listFilePath - Path to YAML test list file
@@ -173,12 +173,11 @@ class TestEngine {
 	async runYamlListTests(listFilePath) {
 		const YamlListParser = require('./lib/yaml-list-parser')
 
-		// Pass project root to parser
-		const projectRoot = process.cwd()
-		const parser = new YamlListParser(projectRoot)
+		// Pass config to parser for path resolution
+		const parser = new YamlListParser(this.config)
 
 		this.logger.log('Loading YAML test list configuration...')
-		this.logger.log(`Project root: ${projectRoot}`)
+		this.logger.log(`Test config root: ${parser.testConfigRoot}`)
 
 		const testNodes = await parser.parseListFile(listFilePath)
 

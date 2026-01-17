@@ -1,66 +1,46 @@
 # Test Automation Configuration
 
 browser:
-  # Launch browser in headless mode (true) or with UI (false)
   headless: false
-  
-  # Base URL for the application under test
   baseUrl: 'http://172.16.0.171:8086/mdw_corepkgshiire-web/DenpyoApproval.do'
-  
-  # Browser viewport size
   viewport:
     width: 1535
     height: 1025
-  
-  # Additional browser launch arguments
   args:
     - '--start-maximized'
     - '--disable-blink-features=AutomationControlled'
 
 execution:
-  # Timeout for individual actions (milliseconds)
   actionTimeout: 30000
-  
-  # Timeout for page navigation (milliseconds)
   navigationTimeout: 30000
-  
-  # Wait after page load before starting test steps (milliseconds, optional)
   pageLoadWait: 1000
-  
-  # Delay between steps (milliseconds, optional)
   stepDelay: 500
-  
-  # Stop execution on first failure
   stopOnFailure: false
-  
-  # Stop executing sibling tests when a child test fails
   stopOnChildFailure: false
-  
-  # Maximum retry attempts for failed actions
   maxRetries: 3
 
 screenshots:
-  # Enable screenshot capture
   enabled: true
-  
-  # Capture full page or viewport only
   fullPage: true
-  
-  # Screenshot timing
   captureBeforeSubmit: true
   captureAfterSubmit: true
   captureOnFailure: true
-  
-  # Clean up output directories before test run
   cleanupBeforeRun: true
-  
-  # Output directories
   outputPath: ./screenshots
   failurePath: ./screenshots/failures
 
 logging:
-  # Log level: debug, info, warn, error
   level: info
-  
-  # Log file path (optional)
   logFile: ./test-execution.log
+
+# NEW: Test configuration paths
+paths:
+  # Base directory for test configurations (can be absolute or relative)
+  testConfigRoot: 'D:\learn\automation_test\tests'
+  
+  # Subdirectories within testConfigRoot
+  scenarios: 'scenarios'
+  testLists: 'test-lists'
+  
+  # Alternative: Use relative paths from project root
+  # testConfigRoot: '../test-configs'

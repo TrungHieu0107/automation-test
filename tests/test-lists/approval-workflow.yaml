@@ -1,4 +1,7 @@
+# Approval Workflow Test List
+# Paths are relative to D:\test-configs\
+
 test_list:
-  - file: tests/scenarios/search.yaml
+  - file: scenarios/search.yaml
     children:
-      - file: tests/scenarios/approve.yaml
+      - file: scenarios/approve.yaml
