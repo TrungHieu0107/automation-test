@@ -1,0 +1,32 @@
+{
+  "name": "web-automation-test-engine",
+  "version": "1.0.0",
+  "description": "Configurable web automation testing application for Microsoft Edge",
+  "main": "test-engine.js",
+  "scripts": {
+    "test": "node test-engine.js",
+    "test-list": "node test-engine.js ./config.yaml ./test-list.xml",
+    "test:custom": "node test-engine.js",
+    "install-browsers": "npx playwright install msedge"
+  },
+  "keywords": [
+    "automation",
+    "testing",
+    "playwright",
+    "edge",
+    "web-testing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.40.0",
+    "js-yaml": "^4.1.0",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

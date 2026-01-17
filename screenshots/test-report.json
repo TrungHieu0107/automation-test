@@ -1,0 +1,60 @@
+{
+  "executionTime": "2026-01-17T03:45:50.061Z",
+  "totalTests": 1,
+  "passed": 0,
+  "failed": 1,
+  "results": [
+    {
+      "name": "Test - Success",
+      "status": "failed",
+      "steps": [
+        {
+          "step": 1,
+          "status": "passed"
+        },
+        {
+          "step": 2,
+          "status": "passed"
+        },
+        {
+          "step": 3,
+          "status": "passed"
+        },
+        {
+          "step": 4,
+          "status": "passed"
+        },
+        {
+          "step": 5,
+          "status": "passed"
+        },
+        {
+          "step": 6,
+          "status": "passed"
+        },
+        {
+          "step": 7,
+          "status": "passed"
+        },
+        {
+          "step": 8,
+          "status": "passed"
+        },
+        {
+          "step": 9,
+          "status": "passed"
+        },
+        {
+          "step": 10,
+          "status": "passed"
+        }
+      ],
+      "error": "page.waitForEvent: Timeout 30000ms exceeded while waiting for event \"dialog\"\n=========================== logs ===========================\nwaiting for event \"dialog\"\n============================================================",
+      "screenshots": [
+        "screenshots\\failures\\Test_-_Success_failure_2026-01-17T03-45-49-953Z.png"
+      ],
+      "hierarchyLevel": 0,
+      "skippedNavigation": false
+    }
+  ]
+}

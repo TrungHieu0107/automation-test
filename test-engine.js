@@ -1,0 +1,355 @@
+// test-engine.js
+const { chromium } = require('playwright');
+const fs = require('fs').promises;
+const path = require('path');
+const yaml = require('js-yaml');
+
+const Logger = require('./lib/logger');
+const ActionHandler = require('./lib/action-handler');
+const XmlParser = require('./lib/xml-parser');
+const ReportGenerator = require('./lib/report-generator');
+
+class TestEngine {
+  constructor(configPath) {
+    this.configPath = configPath;
+    this.config = null;
+    this.browser = null;
+    this.context = null;
+    this.page = null;
+    this.testResults = [];
+    
+    // Modules
+    this.logger = null;
+    this.actionHandler = null;
+    this.xmlParser = null;
+    this.reportGenerator = null;
+  }
+
+  async initialize() {
+    // Load configuration
+    const configFile = await fs.readFile(this.configPath, 'utf8');
+    this.config = yaml.load(configFile);
+
+    // Initialize modules
+    this.logger = new Logger(this.config);
+    this.xmlParser = new XmlParser();
+    
+    this.logger.log('=================================================');
+    this.logger.log('  WEB AUTOMATION TEST ENGINE - INITIALIZATION');
+    this.logger.log('=================================================');
+
+    // Setup directories
+    await this.ensureDirectories();
+
+    // Launch browser
+    this.logger.log('Launching Microsoft Edge browser...');
+    this.browser = await chromium.launch({
+      headless: this.config.browser.headless || false,
+      channel: 'msedge',
+      args: this.config.browser.args || []
+    });
+
+    // Create context
+    this.context = await this.browser.newContext({
+      viewport: this.config.browser.viewport || { width: 1280, height: 720 },
+      ignoreHTTPSErrors: true
+    });
+
+    this.page = await this.context.newPage();
+    this.page.setDefaultTimeout(this.config.execution.actionTimeout || 30000);
+
+    // Initialize action handler after page is ready
+    this.actionHandler = new ActionHandler(this.page, this.config, this.logger);
+    this.reportGenerator = new ReportGenerator(this.config, this.logger);
+
+    this.logger.logSuccess('Test engine initialized successfully');
+    this.logger.log('=================================================\n');
+  }
+
+  async ensureDirectories() {
+    const dirs = [
+      this.config.screenshots.outputPath,
+      this.config.screenshots.failurePath
+    ];
+
+    for (const dir of dirs) {
+      if (this.config.screenshots.cleanupBeforeRun) {
+        try {
+          await fs.rm(dir, { recursive: true, force: true });
+          this.logger.log(`Cleaned up directory: ${dir}`);
+        } catch (error) {
+          if (error.code !== 'ENOENT') {
+            this.logger.logError(`Failed to cleanup directory ${dir}`, error);
+          }
+        }
+      }
+
+      await fs.mkdir(dir, { recursive: true });
+      this.logger.log(`Ensured directory exists: ${dir}`);
+    }
+  }
+
+  async runTests(testScenarioPath) {
+    try {
+      if (testScenarioPath.endsWith('.xml')) {
+        await this.runHierarchicalTests(testScenarioPath);
+      } else {
+        await this.runSequentialTests(testScenarioPath);
+      }
+
+      await this.reportGenerator.generate(this.testResults);
+      this.logger.log('All tests completed');
+    } catch (error) {
+      this.logger.logError('Test execution failed', error);
+      throw error;
+    }
+  }
+
+  async runSequentialTests(jsonPath) {
+    const scenarioFile = await fs.readFile(jsonPath, 'utf8');
+    const testScenarios = JSON.parse(scenarioFile);
+
+    this.logger.log(`Loaded ${testScenarios.length} test scenarios`);
+
+    for (const testCase of testScenarios) {
+      await this.executeTestCase(testCase);
+    }
+  }
+
+  async runHierarchicalTests(xmlPath) {
+    this.logger.log('Loading hierarchical test configuration from XML...');
+    
+    const xmlContent = await fs.readFile(xmlPath, 'utf8');
+    const testStructure = await this.xmlParser.parse(xmlContent);
+    const tests = this.xmlParser.extractTests(testStructure);
+    const baseDir = path.dirname(xmlPath);
+
+    this.logger.log(`Found ${tests.length} root test(s) in hierarchy`);
+
+    for (const test of tests) {
+      await this.executeTestHierarchy(test, baseDir, 0);
+    }
+  }
+
+  async executeTestHierarchy(testNode, baseDir, level, skipNavigation = false) {
+    const testName = testNode.name;
+    const testFile = testNode.file;
+    const indent = '  '.repeat(level);
+
+    this.logger.log(`${indent}📋 Executing: ${testName} (${testFile})`);
+
+    const testFilePath = path.join(baseDir, testFile);
+    let testPassed = false;
+
+    try {
+      const scenarioFile = await fs.readFile(testFilePath, 'utf8');
+      const testScenarios = JSON.parse(scenarioFile);
+
+      for (const testCase of testScenarios) {
+        const result = await this.executeTestCase(testCase, level, skipNavigation);
+        
+        if (result.status !== 'passed') {
+          testPassed = false;
+          this.logger.log(`${indent}  ✗ Test node "${testName}" failed - skipping child tests`);
+          return false;
+        }
+      }
+
+      testPassed = true;
+      this.logger.log(`${indent}  ✓ Test node "${testName}" passed`);
+
+    } catch (error) {
+      this.logger.logError(`${indent}  Failed to load test file: ${testFile}`, error);
+      return false;
+    }
+
+    // Execute child tests
+    if (testPassed && testNode.test) {
+      const childTests = Array.isArray(testNode.test) ? testNode.test : [testNode.test];
+      this.logger.log(`${indent}  → Executing ${childTests.length} child test(s)...`);
+
+      for (const childTest of childTests) {
+        const childPassed = await this.executeTestHierarchy(childTest, baseDir, level + 1, true);
+        
+        if (!childPassed && this.config.execution.stopOnChildFailure) {
+          this.logger.log(`${indent}  ⚠ Child test failed - stopping sibling execution`);
+          break;
+        }
+      }
+    }
+
+    return testPassed;
+  }
+
+  async executeTestCase(testCase, hierarchyLevel = 0, skipNavigation = false) {
+    const testName = testCase.name;
+    const indent = '  '.repeat(hierarchyLevel);
+    
+    this.logger.log(`\n${indent}========================================`);
+    this.logger.log(`${indent}Executing test: ${testName}`);
+    this.logger.log(`${indent}========================================`);
+
+    const testResult = {
+      name: testName,
+      status: 'pending',
+      steps: [],
+      error: null,
+      screenshots: [],
+      hierarchyLevel: hierarchyLevel,
+      skippedNavigation: skipNavigation
+    };
+
+    try {
+      // Navigate or continue on same page
+      if (!skipNavigation) {
+        await this.navigateToTestUrl(testCase, indent);
+      } else {
+        await this.prepareChildTest(indent);
+      }
+
+      // Execute steps
+      await this.executeSteps(testCase.steps, testResult, indent);
+
+      // Screenshot before submit
+      if (this.config.screenshots.captureBeforeSubmit) {
+        testResult.screenshots.push(await this.captureScreenshot(testName, 'before-submit'));
+      }
+
+      // Submit
+      this.logger.log(`${indent}Executing submit action...`);
+      await this.actionHandler.executeSubmit(testCase.submit, indent);
+
+      if (testCase.submit.postSubmitWait) {
+        this.logger.log(`${indent}Waiting ${testCase.submit.postSubmitWait}ms after submit...`);
+        await this.wait(testCase.submit.postSubmitWait);
+      }
+
+      // Screenshot after submit
+      if (this.config.screenshots.captureAfterSubmit) {
+        testResult.screenshots.push(await this.captureScreenshot(testName, 'after-submit'));
+      }
+
+      // Assertion
+      this.logger.log(`${indent}Executing assertion...`);
+      await this.actionHandler.executeAssertion(testCase.assertion, indent);
+
+      testResult.status = 'passed';
+      this.logger.logSuccess(`${indent}Test "${testName}" PASSED`);
+
+    } catch (error) {
+      testResult.status = 'failed';
+      testResult.error = error.message;
+      this.logger.logFailure(`${indent}Test "${testName}" FAILED: ${error.message}`);
+
+      if (this.config.screenshots.captureOnFailure) {
+        testResult.screenshots.push(await this.captureScreenshot(testName, 'failure', true));
+      }
+
+      if (this.config.execution.stopOnFailure) {
+        throw error;
+      }
+    } finally {
+      this.testResults.push(testResult);
+    }
+
+    return testResult;
+  }
+
+  async navigateToTestUrl(testCase, indent) {
+    const targetUrl = testCase.url || this.config.browser.baseUrl;
+    if (targetUrl) {
+      this.logger.log(`${indent}Navigating to: ${targetUrl}`);
+      await this.page.goto(targetUrl, { 
+        waitUntil: 'domcontentloaded',
+        timeout: this.config.execution.navigationTimeout || 30000
+      });
+      this.logger.log(`${indent}  → Page loaded successfully`);
+      
+      if (this.config.execution.pageLoadWait) {
+        await this.wait(this.config.execution.pageLoadWait);
+      }
+    }
+  }
+
+  async prepareChildTest(indent) {
+    this.logger.log(`${indent}Continuing on current page (child test - no navigation)`);
+    
+    if (this.config.execution.childTestDelay) {
+      this.logger.log(`${indent}  → Waiting ${this.config.execution.childTestDelay}ms before child test...`);
+      await this.wait(this.config.execution.childTestDelay);
+    }
+  }
+
+  async executeSteps(steps, testResult, indent) {
+    for (let i = 0; i < steps.length; i++) {
+      const step = steps[i];
+      
+      this.logger.log(`${indent}Step ${i + 1}/${steps.length}: ${step.type} - ${step.selector.by}="${step.selector.value}"`);
+      
+      await this.actionHandler.executeStep(step, indent);
+      testResult.steps.push({ step: i + 1, status: 'passed' });
+
+      if (this.config.execution.stepDelay) {
+        await this.wait(this.config.execution.stepDelay);
+      }
+    }
+  }
+
+  async captureScreenshot(testName, stage, isFailure = false) {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `${testName.replace(/\s+/g, '_')}_${stage}_${timestamp}.png`;
+    
+    const outputPath = isFailure 
+      ? this.config.screenshots.failurePath 
+      : this.config.screenshots.outputPath;
+    
+    const fullPath = path.join(outputPath, filename);
+
+    await this.page.screenshot({
+      path: fullPath,
+      fullPage: this.config.screenshots.fullPage || false
+    });
+
+    this.logger.log(`  📸 Screenshot saved: ${fullPath}`);
+    return fullPath;
+  }
+
+  async wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async cleanup() {
+    try {
+      if (this.page) await this.page.close();
+      if (this.context) await this.context.close();
+      if (this.browser) await this.browser.close();
+      this.logger.log('Cleanup completed');
+    } catch (error) {
+      this.logger.logError('Cleanup failed', error);
+    }
+  }
+}
+
+// Main execution
+async function main() {
+  const configPath = process.argv[2] || './config.yaml';
+  const testScenarioPath = process.argv[3] || './test-scenarios.json';
+
+  const engine = new TestEngine(configPath);
+
+  try {
+    await engine.initialize();
+    await engine.runTests(testScenarioPath);
+  } catch (error) {
+    console.error('Fatal error:', error);
+    process.exit(1);
+  } finally {
+    await engine.cleanup();
+  }
+}
+
+if (require.main === module) {
+  main();
+}
+
+module.exports = TestEngine;

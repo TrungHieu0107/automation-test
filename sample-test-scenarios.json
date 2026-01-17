@@ -1,0 +1,188 @@
+[
+	{
+	  "name": "Complete Form with Radio and Select",
+	  "url": "http://localhost:3000/form",
+	  "steps": [
+		{
+		  "type": "input",
+		  "selector": {
+			"by": "id",
+			"value": "fullName"
+		  },
+		  "value": "John Doe"
+		},
+		{
+		  "type": "input",
+		  "selector": {
+			"by": "id",
+			"value": "email"
+		  },
+		  "value": "john@example.com"
+		},
+		{
+		  "type": "radio",
+		  "selector": {
+			"by": "id",
+			"value": "genderMale"
+		  },
+		  "value": "male",
+		  "verifyValue": true
+		},
+		{
+		  "type": "select",
+		  "selector": {
+			"by": "id",
+			"value": "country"
+		  },
+		  "value": "US",
+		  "selectBy": "value",
+		  "verifyValue": true
+		},
+		{
+		  "type": "select",
+		  "selector": {
+			"by": "id",
+			"value": "ageRange"
+		  },
+		  "value": "25-34",
+		  "selectBy": "label"
+		},
+		{
+		  "type": "checkbox",
+		  "selector": {
+			"by": "id",
+			"value": "agreeTerms"
+		  },
+		  "value": true
+		}
+	  ],
+	  "submit": {
+		"step": {
+		  "type": "click",
+		  "selector": {
+			"by": "id",
+			"value": "submitBtn"
+		  }
+		},
+		"waitForNavigation": true,
+		"postSubmitWait": 2000
+	  },
+	  "assertion": {
+		"selector": {
+		  "by": "id",
+		  "value": "successMessage"
+		},
+		"expectedText": "Form submitted successfully"
+	  }
+	},
+	{
+	  "name": "Survey Form with Multiple Radios",
+	  "url": "http://localhost:3000/survey",
+	  "steps": [
+		{
+		  "type": "radio",
+		  "selector": {
+			"by": "name",
+			"value": "satisfaction"
+		  },
+		  "value": "verySatisfied"
+		},
+		{
+		  "type": "radio",
+		  "selector": {
+			"by": "name",
+			"value": "recommend"
+		  },
+		  "value": "yes",
+		  "waitForNavigation": false
+		},
+		{
+		  "type": "select",
+		  "selector": {
+			"by": "id",
+			"value": "department"
+		  },
+		  "value": "Engineering",
+		  "selectBy": "label"
+		},
+		{
+		  "type": "input",
+		  "selector": {
+			"by": "id",
+			"value": "comments"
+		  },
+		  "value": "Great product!"
+		}
+	  ],
+	  "submit": {
+		"step": {
+		  "type": "click",
+		  "selector": {
+			"by": "id",
+			"value": "submitSurvey"
+		  }
+		},
+		"waitForNavigation": true,
+		"postSubmitWait": 1500
+	  },
+	  "assertion": {
+		"selector": {
+		  "by": "id",
+		  "value": "thankYouMessage"
+		},
+		"expectedText": "Thank you for your feedback"
+	  }
+	},
+	{
+	  "name": "Dynamic Select with Page Reload",
+	  "url": "http://localhost:3000/dynamic-form",
+	  "steps": [
+		{
+		  "type": "select",
+		  "selector": {
+			"by": "id",
+			"value": "category"
+		  },
+		  "value": "Electronics",
+		  "selectBy": "label",
+		  "waitForNavigation": true,
+		  "postNavigationWait": 1000
+		},
+		{
+		  "type": "select",
+		  "selector": {
+			"by": "id",
+			"value": "subcategory"
+		  },
+		  "value": "laptops",
+		  "selectBy": "value"
+		},
+		{
+		  "type": "input",
+		  "selector": {
+			"by": "id",
+			"value": "quantity"
+		  },
+		  "value": "2"
+		}
+	  ],
+	  "submit": {
+		"step": {
+		  "type": "click",
+		  "selector": {
+			"by": "id",
+			"value": "addToCart"
+		  }
+		},
+		"waitForNavigation": true,
+		"postSubmitWait": 1000
+	  },
+	  "assertion": {
+		"selector": {
+		  "by": "id",
+		  "value": "cartMessage"
+		},
+		"expectedText": "Added to cart"
+	  }
+	}
+  ]

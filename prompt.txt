@@ -1,0 +1,169 @@
+
+---
+
+GOAL
+Design and implement a configurable web automation testing application written in **Java** that executes automated test scenarios on a real web browser (Microsoft Edge). The tool must reliably interact with web pages, preserve session state across page reloads, capture screenshots based on configuration, and validate results using assertions.
+
+---
+
+SCOPE
+The application runs automated UI tests on real web applications using Java-based browser automation libraries. It interacts with HTML elements by filling forms, clicking buttons, submitting data, and validating results. Tests must continue execution even when the page reloads or redirects, without losing the current test state or browser session.
+
+---
+
+TECHNOLOGY CONSTRAINTS
+
+* Programming language: **Java (Java 17 or later)**
+* Browser automation:
+
+  * Selenium WebDriver (EdgeDriver) **or**
+  * Playwright for Java
+* Browser: **Microsoft Edge (Chromium-based)**
+* Configuration format: YAML
+* Test scenario format: JSON
+
+---
+
+FUNCTIONAL REQUIREMENTS
+
+1. Browser Execution
+
+* All tests must run on Microsoft Edge.
+* A single WebDriver / Browser instance must be reused for the entire test execution lifecycle.
+* Cookies, localStorage, and sessionStorage must not be cleared during execution.
+* Page reloads and redirects must not interrupt the test flow or reset the test state.
+
+2. Test Execution Flow
+
+* Tests are executed sequentially in the order defined in the JSON scenario file.
+* Each test case consists of:
+
+  * Ordered pre-submit steps
+  * A submit action
+  * A post-submit assertion
+* The test engine must internally track the current test case and step index so execution can resume correctly after page reloads or navigation events.
+
+3. Test Scenario Definition
+
+* Test scenarios are defined as a JSON array.
+* Each object represents a single test case and includes:
+
+  * name: test case name
+  * steps: list of pre-submit actions
+  * submit: submit action definition
+  * assertion: expected result validation
+
+4. Step Actions
+
+* Supported action types:
+
+  * input: enter a value into an HTML input element
+  * click: click an HTML element
+* Each step includes:
+
+  * type: input or click
+  * selector:
+
+    * by: id or name
+    * value: selector value
+  * value: required only for input actions
+
+5. Submit Action
+
+* The submit action triggers form submission or navigation.
+* The submit definition includes:
+
+  * step: action definition (same structure as normal steps)
+  * waitForNavigation: boolean
+  * postSubmitWait: optional wait time in milliseconds
+
+6. Assertion Logic
+
+* After page navigation completes, an assertion must be executed.
+* Assertion behavior:
+
+  * Locate the target element using id or name
+  * Retrieve the elementÅfs innerText
+  * Compare it to the expected text
+* The test fails if the values do not match within the defined timeout.
+
+7. Screenshot Capture
+
+* Screenshots must be captured:
+
+  * Immediately before the submit action
+  * After page reload or navigation completes
+  * When an assertion fails
+* Screenshots must be saved to directories defined in the YAML configuration.
+* Screenshot file names must include test name, action type, and timestamp.
+
+---
+
+CONFIGURATION
+
+* Application configuration is stored in a YAML file.
+* Configuration controls:
+
+  * Browser launch options (headless mode, window size)
+  * Global timeouts
+  * Screenshot behavior
+  * Output directories
+  * Failure handling strategy (stop or continue)
+
+Example configuration responsibilities:
+
+* Edge browser options
+* Screenshot enable/disable flags
+* Screenshot output path
+* Action and assertion timeout values
+
+---
+
+NON-FUNCTIONAL REQUIREMENTS
+
+* The application must be modular and extensible (new actions can be added easily).
+* Logging must be clear and structured for each test case and step.
+* Test execution must be deterministic and repeatable.
+* Code should follow clean architecture principles and object-oriented design.
+
+---
+
+SAMPLE TEST SCENARIO FORMAT
+
+[
+{
+"name": "Login Test",
+"steps": [
+{
+"type": "input",
+"selector": { "by": "id", "value": "username" },
+"value": "admin"
+},
+{
+"type": "input",
+"selector": { "by": "id", "value": "password" },
+"value": "123456"
+}
+],
+"submit": {
+"step": {
+"type": "click",
+"selector": { "by": "id", "value": "loginBtn" }
+},
+"waitForNavigation": true,
+"postSubmitWait": 3000
+},
+"assertion": {
+"selector": { "by": "id", "value": "welcomeMessage" },
+"expectedText": "Welcome"
+}
+}
+]
+
+---
+
+EXPECTED OUTCOME
+
+The result should be a reliable Java-based web automation testing tool that executes real browser tests on Microsoft Edge, preserves session state across page reloads, captures screenshots according to configuration, and validates application behavior using assertions.
+
+---

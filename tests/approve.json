@@ -1,0 +1,65 @@
+[
+	{
+		"name": "Approval Test - Success",
+		"steps": [
+			{
+				"type": "click",
+				"selector": {
+					"by": "name",
+					"value": "hyoji"
+				},
+				"waitForNavigation": false,
+				"postSubmitWait": 1000
+			},
+			{
+				"type": "radio",
+				"selector": {
+					"by": "xpath",
+					"value": "//*[@id='extend_search']/div/table[15]/tbody/tr/td/label[2]/input"
+				},
+				"value": "00",
+				"verifyValue": true
+			},
+			{
+				"type": "click",
+				"selector": {
+					"by": "xpath",
+					"value": "/html/body/form/table/tbody/tr[2]/td/div[1]/table[3]/tbody/tr/td/input[4]"
+				}
+			},
+			{
+				"type": "click",
+				"selector": {
+					"by": "name",
+					"value": "search"
+				}
+			},
+			{
+				"type": "checkbox",
+				"selector": {
+					"by": "name",
+					"value": "headItemRows[0].sentaku_cb.value"
+				},
+				"value": "true"
+			}
+		],
+		"submit": {
+			"step": {
+				"type": "click",
+				"selector": {
+					"by": "name",
+					"value": "approve"
+				}
+			},
+			"waitForNavigation": false,
+			"postSubmitWait": 2000
+		},
+		"assertion": {
+			"selector": {
+				"by": "id",
+				"value": "message"
+			},
+			"expectedText": "更新処理が完了しました。"
+		}
+	}
+]
