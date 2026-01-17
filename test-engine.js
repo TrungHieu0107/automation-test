@@ -26,7 +26,7 @@ class TestEngine {
     this.context = null;
     this.page = null;
     this.testResults = [];
-    
+
     // Modules
     this.logger = null;
     this.actionHandler = null;
@@ -47,7 +47,7 @@ class TestEngine {
     // Initialize modules
     this.logger = new Logger(this.config);
     this.xmlParser = new XmlParser();
-    
+
     this.logger.log('=================================================');
     this.logger.log('  WEB AUTOMATION TEST ENGINE - INITIALIZATION');
     this.logger.log('=================================================');
@@ -156,7 +156,7 @@ class TestEngine {
    */
   async runHierarchicalTests(xmlPath) {
     this.logger.log('Loading hierarchical test configuration from XML...');
-    
+
     const xmlContent = await fs.readFile(xmlPath, 'utf8');
     const testStructure = await this.xmlParser.parse(xmlContent);
     const tests = this.xmlParser.extractTests(testStructure);
@@ -194,7 +194,7 @@ class TestEngine {
 
       for (const testCase of testScenarios) {
         const result = await this.executeTestCase(testCase, level, skipNavigation);
-        
+
         if (result.status !== 'passed') {
           testPassed = false;
           this.logger.log(`${indent}  ✗ Test node "${testName}" failed - skipping child tests`);
@@ -217,7 +217,7 @@ class TestEngine {
 
       for (const childTest of childTests) {
         const childPassed = await this.executeTestHierarchy(childTest, baseDir, level + 1, true);
-        
+
         if (!childPassed && this.config.execution.stopOnChildFailure) {
           this.logger.log(`${indent}  ⚠ Child test failed - stopping sibling execution`);
           break;
@@ -239,7 +239,7 @@ class TestEngine {
   async executeTestCase(testCase, hierarchyLevel = 0, skipNavigation = false) {
     const testName = testCase.name;
     const indent = '  '.repeat(hierarchyLevel);
-    
+
     this.logger.log(`\n${indent}========================================`);
     this.logger.log(`${indent}Executing test: ${testName}`);
     this.logger.log(`${indent}========================================`);
@@ -284,9 +284,16 @@ class TestEngine {
         testResult.screenshots.push(await this.captureScreenshot(testName, 'after-submit'));
       }
 
-      // Assertion
-      this.logger.log(`${indent}Executing assertion...`);
-      await this.actionHandler.executeAssertion(testCase.assertion, indent);
+      // Assertion - support both single and multiple
+      if (testCase.assertions && Array.isArray(testCase.assertions)) {
+        this.logger.log(`${indent}Executing ${testCase.assertions.length} assertions...`);
+        await this.actionHandler.executeAssertions(testCase.assertions, indent);
+      } else if (testCase.assertion) {
+        this.logger.log(`${indent}Executing assertion...`);
+        await this.actionHandler.executeAssertion(testCase.assertion, indent);
+      } else {
+        this.logger.log(`${indent}⚠ No assertions defined for this test`);
+      }
 
       testResult.status = 'passed';
       this.logger.logSuccess(`${indent}Test "${testName}" PASSED`);
@@ -321,12 +328,12 @@ class TestEngine {
     const targetUrl = testCase.url || this.config.browser.baseUrl;
     if (targetUrl) {
       this.logger.log(`${indent}Navigating to: ${targetUrl}`);
-      await this.page.goto(targetUrl, { 
+      await this.page.goto(targetUrl, {
         waitUntil: 'domcontentloaded',
         timeout: this.config.execution.navigationTimeout || 30000
       });
       this.logger.log(`${indent}  → Page loaded successfully`);
-      
+
       if (this.config.execution.pageLoadWait) {
         await this.wait(this.config.execution.pageLoadWait);
       }
@@ -341,7 +348,7 @@ class TestEngine {
    */
   async prepareChildTest(indent) {
     this.logger.log(`${indent}Continuing on current page (child test - no navigation)`);
-    
+
     if (this.config.execution.childTestDelay) {
       this.logger.log(`${indent}  → Waiting ${this.config.execution.childTestDelay}ms before child test...`);
       await this.wait(this.config.execution.childTestDelay);
@@ -360,21 +367,21 @@ class TestEngine {
     for (let i = 0; i < steps.length; i++) {
       const step = steps[i];
       const nextStep = i + 1 < steps.length ? steps[i + 1] : null;
-      
+
       // Check if this is a click followed by a dialog
       if (step.type === 'click' && nextStep && nextStep.type === 'dialog') {
         this.logger.log(`${indent}Step ${i + 1}/${steps.length}: ${step.type} - ${step.selector.by}="${step.selector.value}" (will trigger dialog)`);
-        
+
         // Handle click with dialog - set up dialog listener before clicking
         await this.actionHandler.executeStepWithDialog(step, nextStep, indent);
         testResult.steps.push({ step: i + 1, status: 'passed' });
         testResult.steps.push({ step: i + 2, status: 'passed' });
-        
+
         // Skip the next step since we already handled it
         i++;
       } else {
         this.logger.log(`${indent}Step ${i + 1}/${steps.length}: ${step.type}${step.selector ? ` - ${step.selector.by}="${step.selector.value}"` : ''}`);
-        
+
         await this.actionHandler.executeStep(step, indent);
         testResult.steps.push({ step: i + 1, status: 'passed' });
       }
@@ -395,11 +402,11 @@ class TestEngine {
   async captureScreenshot(testName, stage, isFailure = false) {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `${testName.replace(/\s+/g, '_')}_${stage}_${timestamp}.png`;
-    
-    const outputPath = isFailure 
-      ? this.config.screenshots.failurePath 
+
+    const outputPath = isFailure
+      ? this.config.screenshots.failurePath
       : this.config.screenshots.outputPath;
-    
+
     const fullPath = path.join(outputPath, filename);
 
     await this.page.screenshot({

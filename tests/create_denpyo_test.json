@@ -90,20 +90,44 @@
 		],
 		"submit": {
 			"step": {
+				"type": "click",
+				"selector": {
+					"by": "name",
+					"value": "confirm"
+				}
+			},
+			"dialog": {
 				"type": "dialog",
 				"dialogType": "confirm",
 				"action": "accept",
-				"selector": {}
+				"waitForNavigation": true
 			},
 			"waitForNavigation": true,
 			"postSubmitWait": 2000
 		},
-		"assertion": {
-			"selector": {
-                "by": "id",
-                "value": "message"
-            },
-			"expectedText": "登録処理を行いました。"
-		}
+		"assertions": [
+			{
+				"selector": {
+					"by": "id",
+					"value": "message"
+				},
+				"expectedText": "登録処理を行いました。"
+			},
+			{
+				"selector": {
+					"by": "name",
+					"value": "term_tenpo_cd.value"
+				},
+				"type": "input",
+				"expectedText": "0101"
+			},
+			{
+				"selector": {
+					"by": "css",
+					"value": ".success-indicator"
+				},
+				"expectedText": "Success"
+			}
+		]
 	}
 ]
