@@ -85,8 +85,7 @@
 			{
 				"type": "dialog",
 				"dialogType": "confirm",
-				"action": "accept",
-				"selector": {}
+				"action": "accept"
 			}
 		],
 		"submit": {
@@ -94,7 +93,6 @@
 				"type": "dialog",
 				"dialogType": "confirm",
 				"action": "accept",
-				"waitForNavigation": true,
 				"selector": {}
 			},
 			"waitForNavigation": true,
@@ -105,7 +103,7 @@
                 "by": "id",
                 "value": "message"
             },
-			"expectedText": "�X�V�������������܂����B"
+			"expectedText": "登録処理を行いました。"
 		}
 	}
 ]
