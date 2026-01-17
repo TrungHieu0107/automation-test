@@ -1,0 +1,8 @@
+# Smoke Test - Quick validation of critical features
+
+test_list:
+  - file: tests/scenarios/create-denpyo.yaml
+  
+  - file: tests/scenarios/search.yaml
+    children:
+      - file: tests/scenarios/approve.yaml

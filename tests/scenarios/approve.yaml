@@ -1,0 +1,53 @@
+test_name: "Approval Test"
+
+steps:
+  - click:
+      button: hyoji
+      wait_after: 1000ms
+  
+  - radio:
+      xpath: "//*[@id='extend_search']/div/table[15]/tbody/tr/td/label[2]/input"
+      value: "00"
+  
+  - click:
+      xpath: "/html/body/form/table/tbody/tr[2]/td/div[1]/table[3]/tbody/tr/td/input[4]"
+  
+  - click:
+      button: search
+  
+  - checkbox:
+      field: headItemRows[0].sentaku_cb.value
+      value: true
+
+submit:
+  button: approve
+  wait_after: 2000ms
+
+verify:
+  - message: "更新処理が完了しました。"test_name: "Approval Test"
+
+steps:
+  - click:
+      button: hyoji
+      wait_after: 1000ms
+  
+  - radio:
+      xpath: "//*[@id='extend_search']/div/table[15]/tbody/tr/td/label[2]/input"
+      value: "00"
+  
+  - click:
+      xpath: "/html/body/form/table/tbody/tr[2]/td/div[1]/table[3]/tbody/tr/td/input[4]"
+  
+  - click:
+      button: search
+  
+  - checkbox:
+      field: headItemRows[0].sentaku_cb.value
+      value: true
+
+submit:
+  button: approve
+  wait_after: 2000ms
+
+verify:
+  - message: "更新処理が完了しました。"

@@ -1,0 +1,24 @@
+test_name: "Search Test"
+url: "http://172.16.0.171:8086/mdw_corepkgshiire-web/DenpyoApproval.do"
+
+steps:
+  - checkbox:
+      field: term_denpyo_kb_03.value
+      value: true
+  
+  - input:
+      field: term_toroku_dt_from.value
+      value: "20250310"
+  
+  - input:
+      field: term_toroku_dt_to.value
+      value: "20261201"
+
+submit:
+  button: search
+  wait_after: 2000ms
+
+verify:
+  - input_value:
+      field: approve
+      equals: "承認"

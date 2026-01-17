@@ -1,0 +1,19 @@
+# Full Regression Test Suite
+
+test_list:
+  # Test 1: Create new denpyo
+  - name: "Denpyo Creation Flow"
+    file: tests/scenarios/create-denpyo.yaml
+  
+  # Test 2: Search and approve workflow
+  - name: "Search and Approval Workflow"
+    file: tests/scenarios/search.yaml
+    children:
+      - file: tests/scenarios/approve.yaml
+      
+      # Can have multiple children
+      - name: "Second Approval"
+        file: tests/scenarios/approve.yaml
+  
+  # Test 3: Standalone search
+  - file: tests/scenarios/search.yaml

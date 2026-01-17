@@ -1,0 +1,14 @@
+# Example with multiple nesting levels
+
+test_list:
+  - name: "Login"
+    file: tests/scenarios/login.yaml
+    children:
+      - name: "Dashboard"
+        file: tests/scenarios/dashboard.yaml
+        children:
+          - name: "Create Item"
+            file: tests/scenarios/create-item.yaml
+            children:
+              - name: "Verify Item"
+                file: tests/scenarios/verify-item.yaml

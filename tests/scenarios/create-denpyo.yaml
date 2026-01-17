@@ -1,0 +1,58 @@
+test_name: "Create Denpyo"
+url: "http://172.16.0.171:8086/mdw_corepkgshiire-web/ShiireDenpyoEntry.do"
+
+steps:
+  - input:
+      field: term_tenpo_cd.value
+      value: "0101"
+  
+  - radio:
+      xpath: "/html/body/form/table[1]/tbody/tr/td/div[1]/table[4]/tbody/tr/td/label[1]/input"
+      value: "0"
+  
+  - input:
+      field: term_bunrui1_cd.value
+      value: "0101"
+  
+  - input:
+      field: term_torihikisaki_cd.value
+      value: "030100"
+  
+  - input:
+      field: term_denpyo_dt.value
+      value: "20250309"
+  
+  - click:
+      button: search
+  
+  - input:
+      field: itemrow[0].syohin_cd.value
+      value: "0000002721523"
+  
+  - input:
+      field: itemrow[0].suryo.value
+      value: "1"
+  
+  - input:
+      field: genka_kei_check.value
+      value: "100"
+      wait_for_reload: true
+
+submit:
+  button: confirm
+  dialogs:
+    - confirm: accept
+    - confirm: accept
+  wait_for_navigation: true
+  wait_after: 2000ms
+
+verify:
+  - message: "登録処理を行いました。"
+  - input_value:
+      field: term_tenpo_cd.value
+      equals: "0101"
+  - style:
+      element: "#message"
+      color: green
+      font_weight: bold
+  - visible: "#message"

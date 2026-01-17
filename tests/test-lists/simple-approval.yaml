@@ -1,0 +1,5 @@
+# Simple list format - just file paths
+
+tests:
+  - tests/scenarios/search.yaml:
+      - tests/scenarios/approve.yaml

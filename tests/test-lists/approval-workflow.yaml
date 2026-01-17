@@ -1,0 +1,4 @@
+test_list:
+  - file: tests/scenarios/search.yaml
+    children:
+      - file: tests/scenarios/approve.yaml

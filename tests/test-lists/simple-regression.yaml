@@ -1,0 +1,6 @@
+tests:
+  - tests/scenarios/create-denpyo.yaml
+  
+  - tests/scenarios/search.yaml:
+      - tests/scenarios/approve.yaml
+      - tests/scenarios/approve.yaml  # Run twice
