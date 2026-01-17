@@ -55,7 +55,7 @@ Create `config.yaml`:
 ```yaml
 browser:
   headless: false
-  baseUrl: 'https://www.google.com'
+  baseUrl: "https://www.google.com"
   viewport:
     width: 1280
     height: 720
@@ -89,6 +89,7 @@ node test-engine.js ./config.yaml ./tests/my-first-test.json
 ## 5. View Results
 
 Open `./screenshots/test-report.html` in your browser to see:
+
 - ? Test results
 - ? Screenshots
 - ? Execution summary
@@ -123,6 +124,7 @@ Create `test-list.xml`:
 ```
 
 Run with:
+
 ```bash
 node test-engine.js ./config.yaml ./test-list.xml
 ```
@@ -137,7 +139,7 @@ browser:
 
 execution:
   stepDelay: 0
-  
+
 screenshots:
   captureBeforeSubmit: false
   captureAfterSubmit: false
@@ -154,11 +156,22 @@ This makes tests run **50-70% faster**!
   "name": "Login Test",
   "url": "http://localhost:3000/login",
   "steps": [
-    { "type": "input", "selector": { "by": "id", "value": "username" }, "value": "admin" },
-    { "type": "input", "selector": { "by": "id", "value": "password" }, "value": "password123" }
+    {
+      "type": "input",
+      "selector": { "by": "id", "value": "username" },
+      "value": "admin"
+    },
+    {
+      "type": "input",
+      "selector": { "by": "id", "value": "password" },
+      "value": "password123"
+    }
   ],
   "submit": {
-    "step": { "type": "click", "selector": { "by": "id", "value": "loginBtn" } },
+    "step": {
+      "type": "click",
+      "selector": { "by": "id", "value": "loginBtn" }
+    },
     "waitForNavigation": true,
     "postSubmitWait": 2000
   },
@@ -176,14 +189,38 @@ This makes tests run **50-70% faster**!
   "name": "User Registration",
   "url": "http://localhost:3000/register",
   "steps": [
-    { "type": "input", "selector": { "by": "id", "value": "email" }, "value": "user@test.com" },
-    { "type": "input", "selector": { "by": "id", "value": "password" }, "value": "Pass123!" },
-    { "type": "radio", "selector": { "by": "id", "value": "genderMale" }, "value": "male" },
-    { "type": "select", "selector": { "by": "id", "value": "country" }, "value": "US", "selectBy": "value" },
-    { "type": "checkbox", "selector": { "by": "id", "value": "terms" }, "value": true }
+    {
+      "type": "input",
+      "selector": { "by": "id", "value": "email" },
+      "value": "user@test.com"
+    },
+    {
+      "type": "input",
+      "selector": { "by": "id", "value": "password" },
+      "value": "Pass123!"
+    },
+    {
+      "type": "radio",
+      "selector": { "by": "id", "value": "genderMale" },
+      "value": "male"
+    },
+    {
+      "type": "select",
+      "selector": { "by": "id", "value": "country" },
+      "value": "US",
+      "selectBy": "value"
+    },
+    {
+      "type": "checkbox",
+      "selector": { "by": "id", "value": "terms" },
+      "value": true
+    }
   ],
   "submit": {
-    "step": { "type": "click", "selector": { "by": "id", "value": "registerBtn" } },
+    "step": {
+      "type": "click",
+      "selector": { "by": "id", "value": "registerBtn" }
+    },
     "waitForNavigation": true,
     "postSubmitWait": 2000
   },
@@ -214,23 +251,28 @@ Each test continues on the same page - no reloads between steps!
 ## Troubleshooting
 
 ### "Browser not found"
+
 ```bash
 npx playwright install msedge
 ```
 
 ### "Element not found"
+
 - Increase timeout in config: `actionTimeout: 60000`
 - Check selector is correct
 - Ensure page is fully loaded
 
 ### Tests are slow
+
 - Set `stepDelay: 0`
 - Use `headless: true`
 - Disable unnecessary screenshots
 - See [Performance Guide](performance-optimization-guide.md)
 
 ### Page reload issues
+
 Add `waitForNavigation: true` to the action:
+
 ```json
 {
   "type": "checkbox",
@@ -259,6 +301,7 @@ Add `waitForNavigation: true` to the action:
 ## Ready to Go!
 
 You now have everything you need to:
+
 - ? Write automated tests
 - ? Test forms with all input types
 - ? Create complex test workflows

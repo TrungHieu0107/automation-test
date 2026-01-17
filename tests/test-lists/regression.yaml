@@ -3,12 +3,12 @@
 test_list:
   - name: "Denpyo Creation"
     file: scenarios/create-denpyo.yaml
-  
+
   - name: "Search and Approval - Flow 1"
     file: scenarios/search.yaml
     children:
       - file: scenarios/approve.yaml
-  
+
   - name: "Search and Approval - Flow 2"
     file: scenarios/search.yaml
     children:

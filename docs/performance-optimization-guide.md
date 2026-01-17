@@ -5,11 +5,12 @@
 ### 1. Reduce Delays
 
 **config.yaml:**
+
 ```yaml
 execution:
-  pageLoadWait: 0           # Remove if not needed
-  childTestDelay: 0         # Remove if not needed  
-  stepDelay: 0              # Remove for maximum speed
+  pageLoadWait: 0 # Remove if not needed
+  childTestDelay: 0 # Remove if not needed
+  stepDelay: 0 # Remove for maximum speed
 ```
 
 **Impact:** Can reduce test time by 50-70%
@@ -17,12 +18,13 @@ execution:
 ### 2. Disable Unnecessary Screenshots
 
 **config.yaml:**
+
 ```yaml
 screenshots:
   enabled: true
-  captureBeforeSubmit: false    # Disable if not needed
-  captureAfterSubmit: false     # Disable if not needed
-  captureOnFailure: true        # Keep this for debugging
+  captureBeforeSubmit: false # Disable if not needed
+  captureAfterSubmit: false # Disable if not needed
+  captureOnFailure: true # Keep this for debugging
 ```
 
 **Impact:** Saves 200-500ms per screenshot
@@ -30,6 +32,7 @@ screenshots:
 ### 3. Use Faster Selectors
 
 **Fastest to Slowest:**
+
 1. ID selectors: `{ "by": "id", "value": "username" }` ?
 2. Name selectors: `{ "by": "name", "value": "email" }` ?
 3. CSS selectors: `{ "by": "css", "value": ".btn-primary" }` ?
@@ -40,6 +43,7 @@ screenshots:
 ### 4. Optimize Navigation Waits
 
 Instead of fixed waits:
+
 ```json
 {
   "waitForNavigation": true,
@@ -48,6 +52,7 @@ Instead of fixed waits:
 ```
 
 Use minimal waits:
+
 ```json
 {
   "waitForNavigation": true,
@@ -56,6 +61,7 @@ Use minimal waits:
 ```
 
 Or remove if not needed:
+
 ```json
 {
   "waitForNavigation": true
@@ -65,10 +71,11 @@ Or remove if not needed:
 ### 5. Reduce Timeouts
 
 **config.yaml:**
+
 ```yaml
 execution:
-  actionTimeout: 10000      # Reduce from 30000
-  navigationTimeout: 15000   # Reduce from 30000
+  actionTimeout: 10000 # Reduce from 30000
+  navigationTimeout: 15000 # Reduce from 30000
 ```
 
 **Warning:** Only reduce if your application is fast and reliable.
@@ -76,9 +83,10 @@ execution:
 ### 6. Use Headless Mode
 
 **config.yaml:**
+
 ```yaml
 browser:
-  headless: true    # Faster than visible browser
+  headless: true # Faster than visible browser
 ```
 
 **Impact:** 10-20% faster execution
@@ -86,6 +94,7 @@ browser:
 ### 7. Skip Cleanup Between Runs
 
 **config.yaml:**
+
 ```yaml
 screenshots:
   cleanupBeforeRun: false
@@ -98,7 +107,7 @@ screenshots:
 ```yaml
 browser:
   headless: true
-  baseUrl: 'http://localhost:3000'
+  baseUrl: "http://localhost:3000"
   viewport:
     width: 1280
     height: 720
@@ -109,13 +118,13 @@ execution:
   pageLoadWait: 0
   childTestDelay: 0
   stepDelay: 0
-  stopOnFailure: true    # Stop immediately on first failure
+  stopOnFailure: true # Stop immediately on first failure
 
 screenshots:
   enabled: true
   captureBeforeSubmit: false
   captureAfterSubmit: false
-  captureOnFailure: true     # Only capture on failure
+  captureOnFailure: true # Only capture on failure
   cleanupBeforeRun: false
 
 logging:
@@ -128,6 +137,7 @@ logging:
 ### 1. Group Related Actions
 
 **Slow:**
+
 ```xml
 <test name="Login" file="login.json" />
 <test name="Dashboard" file="dashboard.json" />
@@ -135,6 +145,7 @@ logging:
 ```
 
 **Fast:**
+
 ```xml
 <test name="Login" file="login.json">
   <test name="Dashboard" file="dashboard.json">
@@ -157,6 +168,7 @@ Reduces file I/O overhead.
 Only assert critical checkpoints, not every step.
 
 **Slow:**
+
 ```json
 "steps": [
   { "type": "input", "selector": {...}, "value": "test" },
@@ -166,6 +178,7 @@ Only assert critical checkpoints, not every step.
 ```
 
 **Fast:**
+
 ```json
 "steps": [
   { "type": "input", "selector": {...}, "value": "test" },
@@ -179,17 +192,18 @@ Only assert critical checkpoints, not every step.
 
 Based on a typical test suite with 20 tests:
 
-| Configuration | Time | Improvement |
-|--------------|------|-------------|
-| Default | 180s | Baseline |
-| No delays | 95s | 47% faster |
-| Headless + No delays | 80s | 56% faster |
-| Headless + No delays + Minimal screenshots | 65s | 64% faster |
-| **Optimal config** | **55s** | **69% faster** |
+| Configuration                              | Time    | Improvement    |
+| ------------------------------------------ | ------- | -------------- |
+| Default                                    | 180s    | Baseline       |
+| No delays                                  | 95s     | 47% faster     |
+| Headless + No delays                       | 80s     | 56% faster     |
+| Headless + No delays + Minimal screenshots | 65s     | 64% faster     |
+| **Optimal config**                         | **55s** | **69% faster** |
 
 ## Real-World Example
 
 **Before Optimization:**
+
 ```yaml
 # Slow config
 execution:
@@ -208,6 +222,7 @@ screenshots:
 **Result:** 20 tests in 180 seconds
 
 **After Optimization:**
+
 ```yaml
 # Fast config
 execution:
@@ -229,15 +244,16 @@ screenshots:
 
 ### Speed vs Reliability
 
-| Setting | Speed | Reliability | Use When |
-|---------|-------|-------------|----------|
-| Long timeouts | ? Slow | ? High | Testing unstable apps |
-| Short timeouts | ? Fast | ?? Medium | Testing stable apps |
-| No delays | ?? Fastest | ? Low | CI/CD on fast infrastructure |
+| Setting        | Speed      | Reliability | Use When                     |
+| -------------- | ---------- | ----------- | ---------------------------- |
+| Long timeouts  | ? Slow     | ? High      | Testing unstable apps        |
+| Short timeouts | ? Fast     | ?? Medium   | Testing stable apps          |
+| No delays      | ?? Fastest | ? Low       | CI/CD on fast infrastructure |
 
 ### Recommended Profiles
 
 **Development (Reliable):**
+
 ```yaml
 execution:
   actionTimeout: 30000
@@ -248,6 +264,7 @@ screenshots:
 ```
 
 **CI/CD (Fast):**
+
 ```yaml
 execution:
   actionTimeout: 10000
@@ -258,6 +275,7 @@ screenshots:
 ```
 
 **Debug (Comprehensive):**
+
 ```yaml
 execution:
   actionTimeout: 60000
@@ -296,6 +314,7 @@ console.log(`Test "${testName}" completed in ${duration}ms`);
 ## Summary
 
 **Quick wins:**
+
 1. Set all delays to 0
 2. Use headless mode
 3. Disable pre/post-submit screenshots

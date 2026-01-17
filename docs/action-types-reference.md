@@ -22,6 +22,7 @@ Fill text into input fields.
 ```
 
 **Properties:**
+
 - `type`: "input"
 - `selector`: Element selector
 - `value`: Text to enter
@@ -43,6 +44,7 @@ Click buttons, links, or any clickable element.
 ```
 
 **With Navigation:**
+
 ```json
 {
   "type": "click",
@@ -56,6 +58,7 @@ Click buttons, links, or any clickable element.
 ```
 
 **Properties:**
+
 - `type`: "click"
 - `selector`: Element selector
 - `waitForNavigation` (optional): Wait for page reload/navigation
@@ -79,6 +82,7 @@ Check or uncheck checkbox elements.
 ```
 
 **With Page Reload:**
+
 ```json
 {
   "type": "checkbox",
@@ -93,6 +97,7 @@ Check or uncheck checkbox elements.
 ```
 
 **Properties:**
+
 - `type`: "checkbox" or "check"
 - `selector`: Element selector
 - `value`: true (check) or false (uncheck)
@@ -118,6 +123,7 @@ Select a radio button option.
 ```
 
 **With Page Reload:**
+
 ```json
 {
   "type": "radio",
@@ -133,6 +139,7 @@ Select a radio button option.
 ```
 
 **Properties:**
+
 - `type`: "radio"
 - `selector`: Element selector
 - `value`: Radio button value to select
@@ -141,6 +148,7 @@ Select a radio button option.
 - `postNavigationWait` (optional): Wait time after reload (ms)
 
 **Behavior:**
+
 - Only selects if not already selected
 - Automatically skips if already selected
 - Can verify the selected value matches expected value
@@ -152,6 +160,7 @@ Select a radio button option.
 Select an option from a dropdown menu.
 
 **Select by Value:**
+
 ```json
 {
   "type": "select",
@@ -166,6 +175,7 @@ Select an option from a dropdown menu.
 ```
 
 **Select by Label:**
+
 ```json
 {
   "type": "select",
@@ -179,6 +189,7 @@ Select an option from a dropdown menu.
 ```
 
 **Select by Index:**
+
 ```json
 {
   "type": "select",
@@ -192,6 +203,7 @@ Select an option from a dropdown menu.
 ```
 
 **With Page Reload:**
+
 ```json
 {
   "type": "select",
@@ -207,6 +219,7 @@ Select an option from a dropdown menu.
 ```
 
 **Properties:**
+
 - `type`: "select"
 - `selector`: Element selector
 - `value`: Option to select (value/label/index based on selectBy)
@@ -222,6 +235,7 @@ Select an option from a dropdown menu.
 All actions support multiple selector strategies:
 
 ### By ID
+
 ```json
 {
   "selector": {
@@ -230,9 +244,11 @@ All actions support multiple selector strategies:
   }
 }
 ```
+
 Finds element with `id="username"`
 
 ### By Name
+
 ```json
 {
   "selector": {
@@ -241,9 +257,11 @@ Finds element with `id="username"`
   }
 }
 ```
+
 Finds element with `name="email"`
 
 ### By CSS Selector
+
 ```json
 {
   "selector": {
@@ -252,9 +270,11 @@ Finds element with `name="email"`
   }
 }
 ```
+
 Finds element matching CSS selector
 
 ### By XPath
+
 ```json
 {
   "selector": {
@@ -263,6 +283,7 @@ Finds element matching CSS selector
   }
 }
 ```
+
 Finds element matching XPath expression
 
 ---
@@ -400,11 +421,13 @@ Use `verifyValue: true` to ensure the correct option is selected:
 ```
 
 This will:
+
 1. Select the radio button
 2. Verify the input value matches "creditCard"
 3. Throw an error if values don't match
 
 Same for select boxes:
+
 ```json
 {
   "type": "select",
@@ -457,9 +480,9 @@ Used when the page displays a `window.alert()` dialog.
 
 **Behavior:**
 
-* Waits for the alert dialog to appear
-* Clicks **OK**
-* Continues test execution after the dialog is closed
+- Waits for the alert dialog to appear
+- Clicks **OK**
+- Continues test execution after the dialog is closed
 
 ---
 
@@ -489,9 +512,9 @@ Used for `window.confirm()` dialogs.
 
 **Behavior:**
 
-* Waits for the confirm dialog
-* Performs the specified action (**OK** or **Cancel**)
-* Continues execution after the dialog closes
+- Waits for the confirm dialog
+- Performs the specified action (**OK** or **Cancel**)
+- Continues execution after the dialog closes
 
 ---
 
@@ -510,10 +533,10 @@ Used for `window.prompt()` dialogs.
 
 **Behavior:**
 
-* Waits for the prompt dialog
-* Inputs the provided value
-* Clicks **OK**
-* Continues test execution
+- Waits for the prompt dialog
+- Inputs the provided value
+- Clicks **OK**
+- Continues test execution
 
 ---
 
@@ -530,14 +553,14 @@ Used for `window.prompt()` dialogs.
 
 ### Execution Rules
 
-* The `dialog` action **must be placed immediately after** the step that triggers the dialog
-* No `selector` is required or allowed
-* Dialog actions **block browser execution** until handled
-* `waitForNavigation` is **not needed** for dialog actions
+- The `dialog` action **must be placed immediately after** the step that triggers the dialog
+- No `selector` is required or allowed
+- Dialog actions **block browser execution** until handled
+- `waitForNavigation` is **not needed** for dialog actions
 
 ---
 
-### Example: Click Button Å® Alert Å® OK
+### Example: Click Button ÔøΩÔøΩ Alert ÔøΩÔøΩ OK
 
 ```json
 {

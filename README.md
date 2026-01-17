@@ -36,6 +36,7 @@ The test engine is now modular and optimized for performance:
 - **report-generator.js**: Report generation logic
 
 This separation makes the code:
+
 - ✅ Easier to maintain
 - ✅ Faster to extend
 - ✅ More testable
@@ -50,7 +51,7 @@ This separation makes the code:
 ✅ **Flexible Assertions** - Validate page content after navigation  
 ✅ **Detailed Logging** - Comprehensive logs for debugging and monitoring  
 ✅ **HTML & JSON Reports** - Visual and structured test reports  
-✅ **Automatic Cleanup** - Remove old results before each run  
+✅ **Automatic Cleanup** - Remove old results before each run
 
 ## Installation
 
@@ -110,27 +111,27 @@ The application uses a YAML configuration file (`config.yaml`) to control behavi
 
 ```yaml
 browser:
-  headless: false          # Run with visible browser
-  baseUrl: 'http://localhost:3000'  # Default URL to navigate to
+  headless: false # Run with visible browser
+  baseUrl: "http://localhost:3000" # Default URL to navigate to
   viewport:
     width: 1280
     height: 720
   args:
-    - '--start-maximized'
+    - "--start-maximized"
 ```
 
 ### Execution Settings
 
 ```yaml
 execution:
-  actionTimeout: 30000           # Timeout for actions (ms)
-  navigationTimeout: 30000       # Timeout for navigation (ms)
-  pageLoadWait: 1000            # Wait after page load (ms)
-  childTestDelay: 500           # Wait before child test starts (ms)
-  stepDelay: 500                 # Delay between steps (ms)
-  stopOnFailure: false           # Continue after failures
-  stopOnChildFailure: false      # Continue siblings after child failure
-  maxRetries: 3                  # Retry failed actions
+  actionTimeout: 30000 # Timeout for actions (ms)
+  navigationTimeout: 30000 # Timeout for navigation (ms)
+  pageLoadWait: 1000 # Wait after page load (ms)
+  childTestDelay: 500 # Wait before child test starts (ms)
+  stepDelay: 500 # Delay between steps (ms)
+  stopOnFailure: false # Continue after failures
+  stopOnChildFailure: false # Continue siblings after child failure
+  maxRetries: 3 # Retry failed actions
 ```
 
 ### Screenshot Settings
@@ -142,7 +143,7 @@ screenshots:
   captureBeforeSubmit: true
   captureAfterSubmit: true
   captureOnFailure: true
-  cleanupBeforeRun: true        # Remove old screenshots before test run
+  cleanupBeforeRun: true # Remove old screenshots before test run
   outputPath: ./screenshots
   failurePath: ./screenshots/failures
 ```
@@ -173,6 +174,7 @@ For complex test workflows with dependencies, use XML configuration:
 ```
 
 **Key Features:**
+
 - Child tests execute ONLY if parent tests pass
 - Supports unlimited nesting levels
 - Organizes complex test workflows
@@ -183,6 +185,7 @@ See [Hierarchical Testing Guide](hierarchical-testing-guide.md) for detailed doc
 ### Supported Actions
 
 #### Input Action
+
 ```json
 {
   "type": "input",
@@ -192,6 +195,7 @@ See [Hierarchical Testing Guide](hierarchical-testing-guide.md) for detailed doc
 ```
 
 #### Click Action
+
 ```json
 {
   "type": "click",
@@ -200,6 +204,7 @@ See [Hierarchical Testing Guide](hierarchical-testing-guide.md) for detailed doc
 ```
 
 #### Checkbox Action
+
 ```json
 {
   "type": "checkbox",
@@ -209,6 +214,7 @@ See [Hierarchical Testing Guide](hierarchical-testing-guide.md) for detailed doc
 ```
 
 #### Radio Button Action
+
 ```json
 {
   "type": "radio",
@@ -219,6 +225,7 @@ See [Hierarchical Testing Guide](hierarchical-testing-guide.md) for detailed doc
 ```
 
 #### Select/Dropdown Action
+
 ```json
 {
   "type": "select",
@@ -230,6 +237,7 @@ See [Hierarchical Testing Guide](hierarchical-testing-guide.md) for detailed doc
 ```
 
 **Select Options:**
+
 - `selectBy: "value"` - Select by option value
 - `selectBy: "label"` - Select by visible text
 - `selectBy: "index"` - Select by index position
@@ -297,7 +305,7 @@ Specify custom config and scenario files:
 # JSON format
 node test-engine.js ./custom-config.yaml ./custom-scenarios.json
 
-# XML format  
+# XML format
 node test-engine.js ./custom-config.yaml ./custom-test-list.xml
 ```
 
@@ -326,6 +334,7 @@ A JSON report is generated after test execution:
 **Location**: `./screenshots/test-report.json`
 
 **Format**:
+
 ```json
 {
   "executionTime": "2024-01-15T10:30:00.000Z",
@@ -348,6 +357,7 @@ An HTML report is also generated for easy viewing:
 **Location**: `./screenshots/test-report.html`
 
 Open the HTML report in your browser to see:
+
 - Visual summary with pass/fail counts
 - Detailed results for each test
 - Error messages for failed tests

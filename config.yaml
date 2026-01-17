@@ -2,13 +2,13 @@
 
 browser:
   headless: false
-  baseUrl: 'http://172.16.0.171:8086/mdw_corepkgshiire-web/DenpyoApproval.do'
+  baseUrl: "http://172.16.0.171:8086/mdw_corepkgshiire-web/DenpyoApproval.do"
   viewport:
     width: 1535
     height: 1025
   args:
-    - '--start-maximized'
-    - '--disable-blink-features=AutomationControlled'
+    - "--start-maximized"
+    - "--disable-blink-features=AutomationControlled"
 
 execution:
   actionTimeout: 30000
@@ -26,8 +26,9 @@ screenshots:
   captureAfterSubmit: true
   captureOnFailure: true
   cleanupBeforeRun: true
-  outputPath: ./screenshots
-  failurePath: ./screenshots/failures
+  outputPath: D:/learn/automation_test/screenshots/successes
+  failurePath: D:/learn/automation_test/screenshots/failures
+  reportPath: ./screenshots
 
 logging:
   level: info
@@ -37,10 +38,10 @@ logging:
 paths:
   # Base directory for test configurations (can be absolute or relative)
   testConfigRoot: 'D:\learn\automation_test\tests'
-  
+
   # Subdirectories within testConfigRoot
-  scenarios: 'scenarios'
-  testLists: 'test-lists'
-  
+  scenarios: "scenarios"
+  testLists: "test-lists"
+
   # Alternative: Use relative paths from project root
   # testConfigRoot: '../test-configs'

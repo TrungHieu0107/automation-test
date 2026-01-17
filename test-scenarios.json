@@ -1,49 +1,49 @@
 [
-	{
-		"name": "Login Test - Valid Credentials",
-		"steps": [
-			{
-				"type": "checkbox",
-				"selector": {
-					"by": "name",
-					"value": "term_denpyo_kb_03.value"
-				},
-				"value": "true"
-			},
-			{
-				"type": "input",
-				"selector": {
-					"by": "name",
-					"value": "term_toroku_dt_from.value"
-				},
-				"value": "20251201"
-			},
-			{
-				"type": "input",
-				"selector": {
-					"by": "name",
-					"value": "term_toroku_dt_to.value"
-				},
-				"value": "20261201"
-			}
-		],
-		"submit": {
-			"step": {
-				"type": "click",
-				"selector": {
-					"by": "name",
-					"value": "search"
-				}
-			},
-			"waitForNavigation": false,
-			"postSubmitWait": 2000
-		},
-		"assertion": {
-			"selector": {
-				"by": "id",
-				"value": "message"
-			},
-			"expectedText": "Welcome, admin!"
-		}
-	}
+  {
+    "name": "Login Test - Valid Credentials",
+    "steps": [
+      {
+        "type": "checkbox",
+        "selector": {
+          "by": "name",
+          "value": "term_denpyo_kb_03.value"
+        },
+        "value": "true"
+      },
+      {
+        "type": "input",
+        "selector": {
+          "by": "name",
+          "value": "term_toroku_dt_from.value"
+        },
+        "value": "20251201"
+      },
+      {
+        "type": "input",
+        "selector": {
+          "by": "name",
+          "value": "term_toroku_dt_to.value"
+        },
+        "value": "20261201"
+      }
+    ],
+    "submit": {
+      "step": {
+        "type": "click",
+        "selector": {
+          "by": "name",
+          "value": "search"
+        }
+      },
+      "waitForNavigation": false,
+      "postSubmitWait": 2000
+    },
+    "assertion": {
+      "selector": {
+        "by": "id",
+        "value": "message"
+      },
+      "expectedText": "Welcome, admin!"
+    }
+  }
 ]

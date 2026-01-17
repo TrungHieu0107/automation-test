@@ -3,7 +3,7 @@
 test_list:
   - name: "Create Denpyo Test"
     file: scenarios/create-denpyo.yaml
-  
+
   - name: "Search and Approve Workflow"
     file: scenarios/search.yaml
     children:

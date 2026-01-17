@@ -5,34 +5,34 @@ steps:
   - input:
       field: term_tenpo_cd.value
       value: "0101"
-  
+
   - radio:
       xpath: "/html/body/form/table[1]/tbody/tr/td/div[1]/table[4]/tbody/tr/td/label[1]/input"
       value: "0"
-  
+
   - input:
       field: term_bunrui1_cd.value
       value: "0101"
-  
+
   - input:
       field: term_torihikisaki_cd.value
       value: "030100"
-  
+
   - input:
       field: term_denpyo_dt.value
       value: "20250309"
-  
+
   - click:
       button: search
-  
+
   - input:
       field: itemrow[0].syohin_cd.value
       value: "0000002721523"
-  
+
   - input:
       field: itemrow[0].suryo.value
       value: "1"
-  
+
   - input:
       field: genka_kei_check.value
       value: "100"

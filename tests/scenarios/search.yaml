@@ -5,11 +5,11 @@ steps:
   - checkbox:
       field: term_denpyo_kb_03.value
       value: true
-  
+
   - input:
       field: term_toroku_dt_from.value
       value: "20250310"
-  
+
   - input:
       field: term_toroku_dt_to.value
       value: "20261201"
