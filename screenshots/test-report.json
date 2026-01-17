@@ -1,5 +1,5 @@
 {
-  "executionTime": "2026-01-17T03:45:50.061Z",
+  "executionTime": "2026-01-17T04:42:06.463Z",
   "totalTests": 1,
   "passed": 0,
   "failed": 1,
@@ -43,16 +43,10 @@
         {
           "step": 9,
           "status": "passed"
-        },
-        {
-          "step": 10,
-          "status": "passed"
         }
       ],
-      "error": "page.waitForEvent: Timeout 30000ms exceeded while waiting for event \"dialog\"\n=========================== logs ===========================\nwaiting for event \"dialog\"\n============================================================",
-      "screenshots": [
-        "screenshots\\failures\\Test_-_Success_failure_2026-01-17T03-45-49-953Z.png"
-      ],
+      "error": "locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('[name=\"confirm\"]')\u001b[22m\n\u001b[2m    - locator resolved to <input type=\"submit\" value=\" 登 録 \" name=\"confirm\" class=\"controlButton\" onclick=\"return doAction(this);\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n",
+      "screenshots": [],
       "hierarchyLevel": 0,
       "skippedNavigation": false
     }

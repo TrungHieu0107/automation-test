@@ -9,7 +9,16 @@ const ActionHandler = require('./lib/action-handler');
 const XmlParser = require('./lib/xml-parser');
 const ReportGenerator = require('./lib/report-generator');
 
+/**
+ * TestEngine class is the main orchestrator for test execution.
+ * Handles browser initialization, test execution (sequential or hierarchical),
+ * screenshot capture, and test result management.
+ */
 class TestEngine {
+  /**
+   * Creates an instance of TestEngine.
+   * @param {string} configPath - Path to the YAML configuration file
+   */
   constructor(configPath) {
     this.configPath = configPath;
     this.config = null;
@@ -25,6 +34,11 @@ class TestEngine {
     this.reportGenerator = null;
   }
 
+  /**
+   * Initializes the test engine by loading configuration, setting up directories,
+   * launching the browser, and initializing all required modules.
+   * @returns {Promise<void>}
+   */
   async initialize() {
     // Load configuration
     const configFile = await fs.readFile(this.configPath, 'utf8');
@@ -66,6 +80,11 @@ class TestEngine {
     this.logger.log('=================================================\n');
   }
 
+  /**
+   * Ensures required directories exist for screenshots and reports.
+   * Optionally cleans up directories before creating them based on configuration.
+   * @returns {Promise<void>}
+   */
   async ensureDirectories() {
     const dirs = [
       this.config.screenshots.outputPath,
@@ -89,6 +108,13 @@ class TestEngine {
     }
   }
 
+  /**
+   * Main entry point for running tests. Determines test type (XML hierarchical or JSON sequential)
+   * and routes to appropriate execution method. Generates reports after completion.
+   * @param {string} testScenarioPath - Path to test scenario file (.json or .xml)
+   * @returns {Promise<void>}
+   * @throws {Error} If test execution fails
+   */
   async runTests(testScenarioPath) {
     try {
       if (testScenarioPath.endsWith('.xml')) {
@@ -105,6 +131,12 @@ class TestEngine {
     }
   }
 
+  /**
+   * Runs tests sequentially from a JSON test scenario file.
+   * Executes each test case one after another in the order they appear in the file.
+   * @param {string} jsonPath - Path to the JSON test scenario file
+   * @returns {Promise<void>}
+   */
   async runSequentialTests(jsonPath) {
     const scenarioFile = await fs.readFile(jsonPath, 'utf8');
     const testScenarios = JSON.parse(scenarioFile);
@@ -116,6 +148,12 @@ class TestEngine {
     }
   }
 
+  /**
+   * Runs hierarchical tests from an XML test configuration file.
+   * Loads and parses XML structure to execute tests in a parent-child hierarchy.
+   * @param {string} xmlPath - Path to the XML test configuration file
+   * @returns {Promise<void>}
+   */
   async runHierarchicalTests(xmlPath) {
     this.logger.log('Loading hierarchical test configuration from XML...');
     
@@ -131,6 +169,15 @@ class TestEngine {
     }
   }
 
+  /**
+   * Executes a test node in the hierarchical test structure.
+   * Recursively executes child tests if the parent test passes.
+   * @param {object} testNode - Test node object containing name, file, and optional child tests
+   * @param {string} baseDir - Base directory path for resolving test file paths
+   * @param {number} level - Hierarchy level for indentation and logging
+   * @param {boolean} [skipNavigation=false] - Whether to skip navigation for child tests
+   * @returns {Promise<boolean>} True if all tests passed, false otherwise
+   */
   async executeTestHierarchy(testNode, baseDir, level, skipNavigation = false) {
     const testName = testNode.name;
     const testFile = testNode.file;
@@ -181,6 +228,14 @@ class TestEngine {
     return testPassed;
   }
 
+  /**
+   * Executes a single test case including navigation, steps, submit action, and assertion.
+   * Captures screenshots at configured stages and handles test failures.
+   * @param {object} testCase - Test case object containing name, url, steps, submit, and assertion
+   * @param {number} [hierarchyLevel=0] - Hierarchy level for indentation
+   * @param {boolean} [skipNavigation=false] - Whether to skip navigation (for child tests)
+   * @returns {Promise<object>} Test result object with status, steps, error, and screenshots
+   */
   async executeTestCase(testCase, hierarchyLevel = 0, skipNavigation = false) {
     const testName = testCase.name;
     const indent = '  '.repeat(hierarchyLevel);
@@ -255,6 +310,13 @@ class TestEngine {
     return testResult;
   }
 
+  /**
+   * Navigates to the test URL specified in the test case or configuration.
+   * Optionally waits for additional time after page load.
+   * @param {object} testCase - Test case object containing optional url property
+   * @param {string} indent - Indentation string for logging output
+   * @returns {Promise<void>}
+   */
   async navigateToTestUrl(testCase, indent) {
     const targetUrl = testCase.url || this.config.browser.baseUrl;
     if (targetUrl) {
@@ -271,6 +333,12 @@ class TestEngine {
     }
   }
 
+  /**
+   * Prepares for a child test execution by waiting on the current page.
+   * Used when child tests continue on the same page without navigation.
+   * @param {string} indent - Indentation string for logging output
+   * @returns {Promise<void>}
+   */
   async prepareChildTest(indent) {
     this.logger.log(`${indent}Continuing on current page (child test - no navigation)`);
     
@@ -280,14 +348,36 @@ class TestEngine {
     }
   }
 
+  /**
+   * Executes a sequence of test steps. Detects click-dialog patterns and handles them together.
+   * Tracks step execution status in the test result.
+   * @param {Array<object>} steps - Array of test step objects
+   * @param {object} testResult - Test result object to update with step statuses
+   * @param {string} indent - Indentation string for logging output
+   * @returns {Promise<void>}
+   */
   async executeSteps(steps, testResult, indent) {
     for (let i = 0; i < steps.length; i++) {
       const step = steps[i];
+      const nextStep = i + 1 < steps.length ? steps[i + 1] : null;
       
-      this.logger.log(`${indent}Step ${i + 1}/${steps.length}: ${step.type} - ${step.selector.by}="${step.selector.value}"`);
-      
-      await this.actionHandler.executeStep(step, indent);
-      testResult.steps.push({ step: i + 1, status: 'passed' });
+      // Check if this is a click followed by a dialog
+      if (step.type === 'click' && nextStep && nextStep.type === 'dialog') {
+        this.logger.log(`${indent}Step ${i + 1}/${steps.length}: ${step.type} - ${step.selector.by}="${step.selector.value}" (will trigger dialog)`);
+        
+        // Handle click with dialog - set up dialog listener before clicking
+        await this.actionHandler.executeStepWithDialog(step, nextStep, indent);
+        testResult.steps.push({ step: i + 1, status: 'passed' });
+        testResult.steps.push({ step: i + 2, status: 'passed' });
+        
+        // Skip the next step since we already handled it
+        i++;
+      } else {
+        this.logger.log(`${indent}Step ${i + 1}/${steps.length}: ${step.type}${step.selector ? ` - ${step.selector.by}="${step.selector.value}"` : ''}`);
+        
+        await this.actionHandler.executeStep(step, indent);
+        testResult.steps.push({ step: i + 1, status: 'passed' });
+      }
 
       if (this.config.execution.stepDelay) {
         await this.wait(this.config.execution.stepDelay);
@@ -295,6 +385,13 @@ class TestEngine {
     }
   }
 
+  /**
+   * Captures a screenshot of the current page and saves it to the appropriate directory.
+   * @param {string} testName - Name of the test for filename generation
+   * @param {string} stage - Stage of test (e.g., 'before-submit', 'after-submit', 'failure')
+   * @param {boolean} [isFailure=false] - Whether this is a failure screenshot
+   * @returns {Promise<string>} Full path to the saved screenshot file
+   */
   async captureScreenshot(testName, stage, isFailure = false) {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `${testName.replace(/\s+/g, '_')}_${stage}_${timestamp}.png`;
@@ -314,10 +411,20 @@ class TestEngine {
     return fullPath;
   }
 
+  /**
+   * Waits for a specified number of milliseconds.
+   * @param {number} ms - Number of milliseconds to wait
+   * @returns {Promise<void>} Promise that resolves after the specified delay
+   */
   async wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  /**
+   * Cleans up browser resources by closing the page, context, and browser.
+   * Should be called after all tests are completed.
+   * @returns {Promise<void>}
+   */
   async cleanup() {
     try {
       if (this.page) await this.page.close();
@@ -330,7 +437,12 @@ class TestEngine {
   }
 }
 
-// Main execution
+/**
+ * Main execution function for command-line usage.
+ * Parses command-line arguments for config and test scenario paths,
+ * initializes the test engine, runs tests, and handles cleanup.
+ * @returns {Promise<void>}
+ */
 async function main() {
   const configPath = process.argv[2] || './config.yaml';
   const testScenarioPath = process.argv[3] || './test-scenarios.json';

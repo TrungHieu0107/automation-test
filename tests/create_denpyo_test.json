@@ -86,7 +86,6 @@
 				"type": "dialog",
 				"dialogType": "confirm",
 				"action": "accept",
-				"waitForNavigation": true,
 				"selector": {}
 			}
 		],
@@ -106,7 +105,7 @@
                 "by": "id",
                 "value": "message"
             },
-			"expectedText": "XVˆ—‚ªŠ®—¹‚µ‚Ü‚µ‚½B"
+			"expectedText": "ï¿½Xï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B"
 		}
 	}
 ]
