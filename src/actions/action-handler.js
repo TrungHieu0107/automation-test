@@ -210,7 +210,7 @@ class ActionHandler {
       if (step.capture) {
         const screenshotPath = await this.captureScreenshot(
           testResult.name,
-          `submit-step-${i + 1}-${this.sanitizeName(stepName)}`,
+          `submit-step-${i + 1}-${stepName}`,
         );
 
         testResult.screenshots.push({
@@ -230,12 +230,12 @@ class ActionHandler {
   async executeSubmitStep(step, indent) {
     switch (step.action) {
       case "click":
-        const element = await this.actionHandler.findElement(step.selector);
+        const element = await this.findElement(step.selector);
         await element.click({ timeout: this.config.execution.actionTimeout });
         break;
 
       case "dialog":
-        await this.actionHandler.handleDialog(
+        await this.handleDialog(
           {
             type: "dialog",
             dialogType: step.dialogType,
@@ -246,7 +246,7 @@ class ActionHandler {
         break;
 
       case "input":
-        await this.actionHandler.executeStep(
+        await this.executeStep(
           {
             type: "input",
             selector: step.selector,
