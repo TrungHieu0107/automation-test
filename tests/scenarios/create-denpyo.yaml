@@ -41,18 +41,18 @@ steps:
 
 submit:
   submit:
-  steps:  # NEW: Array of steps instead of single action
+  steps: # NEW: Array of steps instead of single action
     - name: "Click Submit Button"
       action: click
       selector: { by: name, value: confirm }
       capture: true
-      
+
     - name: "Handle First Confirm Dialog"
       action: dialog
       dialogType: confirm
       dialogAction: accept
       capture: true
-      
+
     - name: "Handle Second Confirm Dialog"
       action: dialog
       dialogType: confirm

@@ -2,12 +2,12 @@
 
 /**
  * Handler for dialog screenshot operations.
- * 
+ *
  * SOLID Principles:
  * - SRP: Single responsibility for dialog screenshot management
  * - DIP: Depends on ScreenshotManager abstraction, not concrete implementation
  * - OCP: Easily extensible for different screenshot types/strategies
- * 
+ *
  * Responsibilities:
  * - Generate screenshot filenames with metadata
  * - Manage screenshot output directories
@@ -28,20 +28,20 @@ class DialogScreenshotHandler {
   /**
    * Capture a screenshot for a dialog.
    * Handles filename generation, directory creation, and delegates capture to ScreenshotManager.
-   * 
+   *
    * @param {object} dialog - Playwright Dialog object
    * @param {object} page - Playwright Page object
    * @param {string} testName - Current test name for filename
    * @param {string} stepInfo - Additional step context (e.g., "submit", "step-3")
    * @returns {Promise<string|null>} Path to saved screenshot or null if disabled
    */
-  async captureForDialog(dialog, page, testName, stepInfo = '') {
+  async captureForDialog(dialog, page, testName, stepInfo = "") {
     if (!this.config.screenshots?.captureDialogs) {
       return null;
     }
 
-    const fs = require('fs').promises;
-    const path = require('path');
+    const fs = require("fs").promises;
+    const path = require("path");
 
     try {
       // Ensure directory exists
@@ -62,14 +62,16 @@ class DialogScreenshotHandler {
 
       return fullPath;
     } catch (error) {
-      this.logger.log(`  ⚠️ Failed to capture dialog screenshot: ${error.message}`);
+      this.logger.log(
+        `  ⚠️ Failed to capture dialog screenshot: ${error.message}`,
+      );
       return null;
     }
   }
 
   /**
    * Generate screenshot filename with metadata.
-   * 
+   *
    * @param {object} dialog - Playwright Dialog object
    * @param {string} testName - Test name
    * @param {string} stepInfo - Step information
@@ -78,8 +80,8 @@ class DialogScreenshotHandler {
    */
   generateFilename(dialog, testName, stepInfo) {
     const dialogType = dialog.type(); // 'alert', 'confirm', or 'prompt'
-    const safeName = (testName || 'unknown-test')
-      .replace(/[^a-zA-Z0-9-_]/g, '_')
+    const safeName = (testName || "unknown-test")
+      .replace(/[^a-zA-Z0-9-_]/g, "_")
       .substring(0, 50);
 
     const parts = [];
@@ -95,11 +97,11 @@ class DialogScreenshotHandler {
     parts.push(dialogType);
 
     if (this.config.screenshots.includeDialogTimestamp) {
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
       parts.push(timestamp);
     }
 
-    return parts.join('_') + '.png';
+    return parts.join("_") + ".png";
   }
 }
 

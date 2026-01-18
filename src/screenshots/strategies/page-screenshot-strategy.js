@@ -1,6 +1,6 @@
 // src/screenshots/strategies/page-screenshot-strategy.js
 
-const ScreenshotStrategy = require('../screenshot-strategy');
+const ScreenshotStrategy = require("../screenshot-strategy");
 
 /**
  * Strategy for capturing page screenshots using Playwright.
@@ -9,7 +9,7 @@ const ScreenshotStrategy = require('../screenshot-strategy');
 class PageScreenshotStrategy extends ScreenshotStrategy {
   /**
    * Capture a page screenshot using Playwright.
-   * 
+   *
    * @param {object} context - { page, path, fullPage }
    * @returns {Promise<string>} Path to saved screenshot
    */
@@ -23,7 +23,7 @@ class PageScreenshotStrategy extends ScreenshotStrategy {
     });
 
     this.logger.log(`  📸 Page screenshot saved: ${path.split(/[\\/]/).pop()}`);
-    
+
     return path;
   }
 

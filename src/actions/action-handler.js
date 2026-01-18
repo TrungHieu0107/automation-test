@@ -199,7 +199,9 @@ class ActionHandler {
       const step = submitConfig.steps[i];
       const stepName = step.name || `Submit Step ${i + 1}`;
 
-      this.logger.log(`${indent}  ${i + 1}/${submitConfig.steps.length}: ${stepName}`);
+      this.logger.log(
+        `${indent}  ${i + 1}/${submitConfig.steps.length}: ${stepName}`,
+      );
 
       // Execute step
       await this.executeSubmitStep(step, indent);
@@ -208,13 +210,13 @@ class ActionHandler {
       if (step.capture) {
         const screenshotPath = await this.captureScreenshot(
           testResult.name,
-          `submit-step-${i + 1}-${this.sanitizeName(stepName)}`
+          `submit-step-${i + 1}-${this.sanitizeName(stepName)}`,
         );
 
         testResult.screenshots.push({
           step: stepName,
           path: screenshotPath,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
 
@@ -227,25 +229,31 @@ class ActionHandler {
 
   async executeSubmitStep(step, indent) {
     switch (step.action) {
-      case 'click':
+      case "click":
         const element = await this.actionHandler.findElement(step.selector);
         await element.click({ timeout: this.config.execution.actionTimeout });
         break;
 
-      case 'dialog':
-        await this.actionHandler.handleDialog({
-          type: 'dialog',
-          dialogType: step.dialogType,
-          action: step.dialogAction
-        }, indent);
+      case "dialog":
+        await this.actionHandler.handleDialog(
+          {
+            type: "dialog",
+            dialogType: step.dialogType,
+            action: step.dialogAction,
+          },
+          indent,
+        );
         break;
 
-      case 'input':
-        await this.actionHandler.executeStep({
-          type: 'input',
-          selector: step.selector,
-          value: step.value
-        }, indent);
+      case "input":
+        await this.actionHandler.executeStep(
+          {
+            type: "input",
+            selector: step.selector,
+            value: step.value,
+          },
+          indent,
+        );
         break;
 
       default:

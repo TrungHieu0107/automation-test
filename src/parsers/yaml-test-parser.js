@@ -141,7 +141,9 @@ class YamlTestParser {
     // NEW FORMAT: submit.steps array
     if (submit.steps && Array.isArray(submit.steps)) {
       return {
-        steps: submit.steps.map((step, index) => this.parseSubmitStep(step, index)),
+        steps: submit.steps.map((step, index) =>
+          this.parseSubmitStep(step, index),
+        ),
         postSubmitWait: this.parseTime(submit.wait_after || submit.waitAfter),
       };
     }
@@ -158,33 +160,36 @@ class YamlTestParser {
 
     // Handle different step actions
     switch (step.action) {
-      case 'click':
+      case "click":
         return {
           name: stepName,
-          action: 'click',
-          selector: this.detectSelector(step.selector || step.button || step.element),
+          action: "click",
+          selector: this.detectSelector(
+            step.selector || step.button || step.element,
+          ),
           capture: step.capture ?? false,
-          wait_after: this.parseTime(step.wait_after)
+          wait_after: this.parseTime(step.wait_after),
         };
 
-      case 'dialog':
+      case "dialog":
         return {
           name: stepName,
-          action: 'dialog',
-          dialogType: step.dialogType || 'confirm',
-          dialogAction: step.dialogAction || step.accept === false ? 'dismiss' : 'accept',
+          action: "dialog",
+          dialogType: step.dialogType || "confirm",
+          dialogAction:
+            step.dialogAction || step.accept === false ? "dismiss" : "accept",
           capture: step.capture ?? false,
-          wait_after: this.parseTime(step.wait_after)
+          wait_after: this.parseTime(step.wait_after),
         };
 
-      case 'input':
+      case "input":
         return {
           name: stepName,
-          action: 'input',
+          action: "input",
           selector: this.detectSelector(step.selector || step.field),
           value: step.value,
           capture: step.capture ?? false,
-          wait_after: this.parseTime(step.wait_after)
+          wait_after: this.parseTime(step.wait_after),
         };
 
       default:
@@ -203,7 +208,7 @@ class YamlTestParser {
       name: "Click Submit Button",
       action: "click",
       selector: this.detectSelector(
-        submit.button || submit.click || submit.selector
+        submit.button || submit.click || submit.selector,
       ),
       capture: true, // Always capture for backward compatibility
     };

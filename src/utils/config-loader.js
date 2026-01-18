@@ -56,10 +56,8 @@ class ConfigLoader {
         captureAfterSubmit: config.screenshots?.captureAfterSubmit ?? true,
         captureOnFailure: config.screenshots?.captureOnFailure ?? true,
         cleanupBeforeRun: config.screenshots?.cleanupBeforeRun ?? true,
-        successPath:
-          config.screenshots?.successPath ?? "./results/successes",
-        failurePath:
-          config.screenshots?.failurePath ?? "./results/failures",
+        successPath: config.screenshots?.successPath ?? "./results/successes",
+        failurePath: config.screenshots?.failurePath ?? "./results/failures",
         reportPath: config.screenshots?.reportPath ?? "./results",
 
         // Dialog screenshots under main screenshots config

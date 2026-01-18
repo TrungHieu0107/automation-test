@@ -1,16 +1,16 @@
 // src/screenshots/screenshot-manager.js
 
-const PageScreenshotStrategy = require('./strategies/page-screenshot-strategy');
+const PageScreenshotStrategy = require("./strategies/page-screenshot-strategy");
 
 /**
  * Manager for screenshot operations using Strategy Pattern.
- * 
+ *
  * Design Pattern: Strategy + Context
  * SOLID Principles:
  * - SRP: Manages screenshot strategies
  * - DIP: Depends on ScreenshotStrategy abstraction
  * - OCP: Add new strategies without modifying this class
- * 
+ *
  * Usage:
  *   const manager = new ScreenshotManager(config, logger);
  *   await manager.capturePage({ page, path });
@@ -31,7 +31,7 @@ class ScreenshotManager {
 
   /**
    * Capture page screenshot using Playwright.
-   * 
+   *
    * @param {object} context - { page, path, fullPage }
    * @returns {Promise<string>} Path to saved screenshot
    */
@@ -42,7 +42,7 @@ class ScreenshotManager {
   /**
    * Capture dialog screenshot using Playwright page screenshot.
    * Adds 50ms delay before capture for page stabilization.
-   * 
+   *
    * @param {object} context - { page, path }
    * @returns {Promise<string|null>} Path to saved screenshot or null
    */
@@ -52,7 +52,7 @@ class ScreenshotManager {
     }
 
     // Wait 50ms for page to stabilize after dialog dismissal
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     return await this.pageStrategy.capture({
       page: context.page,
@@ -64,7 +64,7 @@ class ScreenshotManager {
   /**
    * Register a custom screenshot strategy.
    * Demonstrates Open/Closed Principle.
-   * 
+   *
    * @param {string} type - Strategy type identifier
    * @param {ScreenshotStrategy} strategy - Strategy instance
    */
