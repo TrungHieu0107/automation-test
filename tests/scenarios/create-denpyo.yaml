@@ -40,7 +40,6 @@ steps:
       wait_for_reload: true
 
 submit:
-  submit:
   steps: # NEW: Array of steps instead of single action
     - name: "Click Submit Button"
       action: click
