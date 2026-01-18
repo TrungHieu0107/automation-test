@@ -1,6 +1,6 @@
 // test-engine.js - CLI wrapper for backward compatibility
 // This file maintains backward compatibility with existing npm scripts
-const TestEngine = require('./src/core/test-engine');
+const TestEngine = require("./src/core/test-engine");
 
 /**
  * Main execution function for command-line usage.

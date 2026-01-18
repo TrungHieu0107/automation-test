@@ -1,0 +1,24 @@
+{
+  "executionTime": "2026-01-18T07:24:27.920Z",
+  "totalTests": 2,
+  "passed": 0,
+  "failed": 2,
+  "results": [
+    {
+      "name": "Denpyo Creation",
+      "status": "failed",
+      "error": "Cannot read properties of undefined (reading 'findElement')",
+      "screenshots": [
+        "D:\\learn\\automation_test\\screenshots\\failures\\Denpyo_Creation_failure_2026-01-18T07-24-23-886Z.png"
+      ]
+    },
+    {
+      "name": "Search and Approval - Flow 1",
+      "status": "failed",
+      "error": "Cannot read properties of undefined (reading 'findElement')",
+      "screenshots": [
+        "D:\\learn\\automation_test\\screenshots\\failures\\Search_and_Approval_-_Flow_1_failure_2026-01-18T07-24-27-843Z.png"
+      ]
+    }
+  ]
+}

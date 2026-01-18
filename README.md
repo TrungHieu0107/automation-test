@@ -58,7 +58,7 @@ steps:
   - input:
       field: username
       value: "testuser"
-  
+
   - input:
       field: password
       value: "password123"
@@ -175,6 +175,7 @@ verify:
 ### Comprehensive Test (All Features)
 
 See [examples/comprehensive-scenario.yaml](examples/comprehensive-scenario.yaml) for a complete reference covering:
+
 - All action types (input, click, checkbox, radio, select)
 - Multiple selector strategies (id, name, css, xpath)
 - Various verification methods
@@ -183,6 +184,7 @@ See [examples/comprehensive-scenario.yaml](examples/comprehensive-scenario.yaml)
 ### Hierarchical Test Organization
 
 See [examples/hierarchical-tests.yaml](examples/hierarchical-tests.yaml) for patterns like:
+
 - Parent-child test dependencies
 - Test reuse
 - Multi-level hierarchies
@@ -195,8 +197,8 @@ Edit `config.yaml` to customize:
 
 ```yaml
 browser:
-  headless: false                 # Show browser window
-  baseUrl: "http://localhost:3000"  # Default URL
+  headless: false # Show browser window
+  baseUrl: "http://localhost:3000" # Default URL
   viewport:
     width: 1280
     height: 720
@@ -206,11 +208,11 @@ browser:
 
 ```yaml
 execution:
-  actionTimeout: 30000            # Action timeout (ms)
-  navigationTimeout: 30000        # Navigation timeout (ms)
-  pageLoadWait: 1000             # Wait after page load (ms)
-  stepDelay: 500                 # Delay between steps (ms)
-  stopOnFailure: false           # Continue after failures
+  actionTimeout: 30000 # Action timeout (ms)
+  navigationTimeout: 30000 # Navigation timeout (ms)
+  pageLoadWait: 1000 # Wait after page load (ms)
+  stepDelay: 500 # Delay between steps (ms)
+  stopOnFailure: false # Continue after failures
 ```
 
 ### Screenshot Settings
@@ -229,19 +231,20 @@ screenshots:
 
 ## 🎯 Supported Actions
 
-| Action | Purpose | Example |
-|--------|---------|---------|
-| `input` | Fill text fields | `field: username, value: "admin"` |
-| `click` | Click buttons/links | `button: submitBtn` |
-| `checkbox` | Check/uncheck boxes | `field: agree, value: true` |
-| `radio` | Select radio button | `id: optionA` |
-| `select` | Choose from dropdown | `field: country, value: "US"` |
+| Action     | Purpose              | Example                           |
+| ---------- | -------------------- | --------------------------------- |
+| `input`    | Fill text fields     | `field: username, value: "admin"` |
+| `click`    | Click buttons/links  | `button: submitBtn`               |
+| `checkbox` | Check/uncheck boxes  | `field: agree, value: true`       |
+| `radio`    | Select radio button  | `id: optionA`                     |
+| `select`   | Choose from dropdown | `field: country, value: "US"`     |
 
 See [Action Types Reference](docs/action-types-reference.md) for complete details.
 
 ## ✅ YAML Validation
 
 Tests are automatically validated before execution. Common errors caught:
+
 - Missing required fields
 - Invalid action types
 - Malformed selectors
@@ -253,13 +256,16 @@ Validation runs **before** browser initialization, saving time.
 ## 🧪 Test Results
 
 ### Console Output
+
 Real-time colored logs with test progress and status.
 
 ### HTML Report
+
 Visual report with pass/fail summary, screenshots, and error details.  
 Location: `screenshots/test-report.html`
 
 ### JSON Report
+
 Machine-readable results for CI/CD integration.  
 Location: `screenshots/test-report.json`
 
@@ -276,19 +282,23 @@ Location: `screenshots/test-report.json`
 ## 🐛 Troubleshooting
 
 ### Browser Not Found
+
 ```bash
 npx playwright install msedge
 ```
 
 ### Validation Errors
+
 Check the error message - it points to the specific field and issue.
 
 ### Element Not Found
+
 - Verify selector in browser dev tools
 - Increase `actionTimeout` in config
 - Check if element is in iframe
 
 ### Tests Run But Fail
+
 - Review failure screenshots in `screenshots/failures/`
 - Check HTML report for detailed error messages
 - Verify target application is running
@@ -300,6 +310,7 @@ MIT
 ## 🙋 Support
 
 For issues or questions:
+
 1. Check the [documentation](docs/)
 2. Review [examples](examples/)
 3. Examine failure screenshots

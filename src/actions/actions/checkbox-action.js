@@ -1,6 +1,6 @@
 // src/actions/actions/checkbox-action.js
 
-const BaseAction = require('./base-action');
+const BaseAction = require("./base-action");
 
 /**
  * Handles checkbox actions.
@@ -26,7 +26,7 @@ class CheckboxAction extends BaseAction {
         this.logger.log(`${indent}  ☐ Unchecked`);
       } else {
         this.logger.log(
-          `${indent}  ℹ️ Already ${step.value ? "checked" : "unchecked"}`
+          `${indent}  ℹ️ Already ${step.value ? "checked" : "unchecked"}`,
         );
       }
     } else {
@@ -53,7 +53,7 @@ class CheckboxAction extends BaseAction {
 
       if (step.postNavigationWait) {
         this.logger.log(
-          `${indent}  ⏳ Waiting ${step.postNavigationWait}ms after reload...`
+          `${indent}  ⏳ Waiting ${step.postNavigationWait}ms after reload...`,
         );
         await this.wait(step.postNavigationWait);
       }

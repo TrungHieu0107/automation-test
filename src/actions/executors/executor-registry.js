@@ -2,12 +2,12 @@
 
 /**
  * ExecutorRegistry - Registry pattern for action executors.
- * 
+ *
  * Pattern: Registry Pattern
  * - Centralizes executor lookup
  * - Eliminates switch/case statements
  * - Enables runtime executor registration
- * 
+ *
  * SOLID Principles:
  * - OCP: Add new executors without modifying this class
  * - DIP: Depends on ActionExecutor interface
@@ -19,7 +19,7 @@ class ExecutorRegistry {
 
   /**
    * Register an executor for an action type.
-   * 
+   *
    * @param {string} actionType - Action type identifier
    * @param {ActionExecutor} executor - Executor instance
    */
@@ -29,7 +29,7 @@ class ExecutorRegistry {
 
   /**
    * Get executor for action type.
-   * 
+   *
    * @param {string} actionType - Action type
    * @returns {ActionExecutor} Executor instance
    * @throws {Error} If action type not registered
@@ -43,7 +43,7 @@ class ExecutorRegistry {
 
   /**
    * Check if action type is registered.
-   * 
+   *
    * @param {string} actionType - Action type
    * @returns {boolean} True if registered
    */

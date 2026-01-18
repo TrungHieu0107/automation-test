@@ -1,6 +1,6 @@
 // src/actions/actions/input-action.js
 
-const BaseAction = require('./base-action');
+const BaseAction = require("./base-action");
 
 /**
  * Handles input/fill actions on text fields.

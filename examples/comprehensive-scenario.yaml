@@ -10,7 +10,7 @@ steps:
   # ========================================
   # INPUT ACTIONS - Fill in text fields
   # ========================================
-  
+
   # Basic input - using field name
   - input:
       field: firstName
@@ -19,7 +19,7 @@ steps:
   # Input with explicit selector type
   - input:
       selector:
-        by: id  # Options: id, name, css, xpath
+        by: id # Options: id, name, css, xpath
         value: lastName
       value: "Doe"
 
@@ -33,7 +33,7 @@ steps:
   # ========================================
   # CLICK ACTIONS - Click buttons/links
   # ========================================
-  
+
   # Simple click using name
   - click:
       button: nextButton
@@ -47,7 +47,7 @@ steps:
   # ========================================
   # CHECKBOX ACTIONS - Check/uncheck boxes
   # ========================================
-  
+
   # Check a checkbox
   - checkbox:
       field: agreeTerms
@@ -61,22 +61,22 @@ steps:
   # ========================================
   # RADIO BUTTON ACTIONS - Select radio options
   # ========================================
-  
+
   # Select radio button
   - radio:
       id: genderMale
       value: "male"
-      verify: true  # Verify selection after clicking
+      verify: true # Verify selection after clicking
 
   # ========================================
   # SELECT/DROPDOWN ACTIONS - Choose from dropdown
   # ========================================
-  
+
   # Select by value
   - select:
       field: country
       value: "US"
-      select_by: value  # Options: value, label, index
+      select_by: value # Options: value, label, index
 
   # Select by visible text (label)
   - select:
@@ -94,12 +94,12 @@ steps:
 submit:
   # Click submit button
   button: submitForm
-  
+
   # Wait for navigation after submit
   wait_for_navigation: true
-  
+
   # Additional wait after page loads
-  wait_after: 1500ms  # Can use "ms" or "s": 1500ms = 1.5s
+  wait_after: 1500ms # Can use "ms" or "s": 1500ms = 1.5s
 
 # Verify section - Multiple assertion types
 verify:

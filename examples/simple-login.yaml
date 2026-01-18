@@ -14,7 +14,7 @@ url: "http://example.com/login"
 steps:
   # Step 1: Fill in username field
   - input:
-      field: username  # Selector - can be name, id, or explicit selector
+      field: username # Selector - can be name, id, or explicit selector
       value: "testuser"
 
   # Step 2: Fill in password field
@@ -25,12 +25,12 @@ steps:
   # Step 3: Check "Remember Me" checkbox (optional)
   - checkbox:
       field: rememberMe
-      value: true  # true to check, false to uncheck
+      value: true # true to check, false to uncheck
 
 # Submit - How to submit the form
 submit:
-  button: loginButton  # The name/id of the submit button
-  wait_after: 2000ms   # Wait 2 seconds after submitting (optional)
+  button: loginButton # The name/id of the submit button
+  wait_after: 2000ms # Wait 2 seconds after submitting (optional)
 
 # Verify - Check that login was successful
 verify:

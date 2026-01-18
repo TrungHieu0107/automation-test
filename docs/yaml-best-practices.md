@@ -54,10 +54,10 @@ test_name: "Test 1"
 steps:
   # Fill in required fields
  - input: { field: email, value: "user@example.com" }
-  
+
   # Check opt-in for marketing emails (required for promo code)
   - checkbox: { field: marketing, value: true }
-  
+
   # Select country - triggers state dropdown population
   - select: { field: country, value: "US", select_by: value }
 ```
@@ -70,11 +70,11 @@ steps:
   # Personal Information
   - input: { field: firstName, value: "John" }
   - input: { field: lastName, value: "Doe" }
-  
+
   # Contact Details
   - input: { field: email, value: "john@example.com" }
   - input: { field: phone, value: "555-0100" }
-  
+
   # Account Security
   - input: { field: password, value: "SecurePass123!" }
   - input: { field: confirmPassword, value: "SecurePass123!" }
@@ -99,7 +99,7 @@ steps:
 
 # 2. ✅ GOOD: Use name for form elements
 - input:
-    field: username  # Automatically uses 'name' attribute
+    field: username # Automatically uses 'name' attribute
     value: "admin"
 
 # 3. ✅ OK: CSS for complex selections
@@ -178,17 +178,17 @@ verify:
 verify:
   # Text content
   - message: "Welcome back!"
-  
+
   # Input values
   - input_value: { field: displayName, equals: "John Doe" }
-  
+
   # Visibility
   - visible: successBanner
   - hidden: errorMessage
-  
+
   # Styles
   - style: { element: statusIcon, color: green }
-  
+
   # Attributes
   - attribute: { element: submitBtn, name: disabled, value: "true" }
 ```
@@ -225,10 +225,10 @@ tests:
   # Authentication Tests
   - file: tests/scenarios/login.yaml
     name: "Login - Valid Credentials"
-  
+
   - file: tests/scenarios/login-invalid.yaml
     name: "Login - Invalid Password"
-  
+
   # Profile Tests
   - tests/scenarios/login.yaml:
       - file: tests/scenarios/edit-profile.yaml
@@ -256,7 +256,7 @@ submit:
 ```yaml
 # ✅ GOOD: Reuse common scenarios
 tests:
-  - tests/scenarios/login.yaml  # Login once
+  - tests/scenarios/login.yaml # Login once
   - tests/scenarios/action-a.yaml:
       - tests/scenarios/action-b.yaml
       - tests/scenarios/action-c.yaml
@@ -267,8 +267,8 @@ tests:
 ```yaml
 # config.yaml
 execution:
-  stopOnFailure: false          # Continue through test suite
-  stopOnChildFailure: true      # Stop siblings if child fails
+  stopOnFailure: false # Continue through test suite
+  stopOnChildFailure: true # Stop siblings if child fails
 ```
 
 ## 🎨 YAML Syntax Tips
@@ -363,7 +363,7 @@ steps:
 ```yaml
 # ❌ BAD: Multiple actions per step
 - input: { field: username, value: "admin" }
-  click: { button: next }  # Error: only one action per step!
+  click: { button: next } # Error: only one action per step!
 
 # ✅ GOOD: Separate steps
 - input: { field: username, value: "admin" }
@@ -382,6 +382,7 @@ node test-engine.js ./config.yaml ./my-test.yaml
 ```
 
 Common validation errors:
+
 - ❌ Missing required fields
 - ❌ Invalid action types
 - ❌ Wrong data types

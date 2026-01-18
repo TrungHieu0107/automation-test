@@ -12,7 +12,11 @@ class DirectoryManager {
    * @param {Function} logger - Logger function for output
    * @returns {Promise<void>}
    */
-  static async ensureDirectories(directories, cleanupFirst = false, logger = null) {
+  static async ensureDirectories(
+    directories,
+    cleanupFirst = false,
+    logger = null,
+  ) {
     for (const dir of directories) {
       if (cleanupFirst) {
         try {
@@ -20,7 +24,9 @@ class DirectoryManager {
           if (logger) logger(`Cleaned up directory: ${dir}`);
         } catch (error) {
           if (error.code !== "ENOENT") {
-            throw new Error(`Failed to cleanup directory ${dir}: ${error.message}`);
+            throw new Error(
+              `Failed to cleanup directory ${dir}: ${error.message}`,
+            );
           }
         }
       }

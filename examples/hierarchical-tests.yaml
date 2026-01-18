@@ -14,7 +14,7 @@ tests:
   # PATTERN 1: Simple Sequential Tests
   # ==================================================
   # These run one after another, no dependencies
-  
+
   - examples/simple-login.yaml
 
   # ==================================================
@@ -22,11 +22,11 @@ tests:
   # ==================================================
   # Child tests run ONLY if parent passes
   # Format: parent-file: [child1, child2, ...]
-  
+
   - examples/simple-login.yaml:
       # After successful login, run these tests:
-      - examples/comprehensive-scenario.yaml  # Test form filling
-      - examples/simple-login.yaml  # Can reuse same test
+      - examples/comprehensive-scenario.yaml # Test form filling
+      - examples/simple-login.yaml # Can reuse same test
 
   # ==================================================
   # PATTERN 3: Multi-Level Hierarchy
@@ -42,9 +42,9 @@ tests:
   # PATTERN 4: Object Format (More Control)
   # ==================================================
   # Use when you need to override test names or organize better
-  
+
   - file: examples/simple-login.yaml
-    name: "Login as Admin"  # Override the test name
+    name: "Login as Admin" # Override the test name
     children:
       - file: examples/comprehensive-scenario.yaml
         name: "Admin-Only Form"
@@ -53,10 +53,10 @@ tests:
   # PATTERN 5: Multiple Children
   # ==================================================
   # Parent test runs once, then all children run
-  
+
   - examples/simple-login.yaml:
-      - examples/simple-login.yaml  # Child 1
-      - examples/comprehensive-scenario.yaml  # Child 2
+      - examples/simple-login.yaml # Child 1
+      - examples/comprehensive-scenario.yaml # Child 2
       # Both children run after parent passes
 
 # ==================================================

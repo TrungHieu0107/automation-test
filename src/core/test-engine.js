@@ -6,14 +6,17 @@ const BrowserManager = require("./browser-manager");
 const TestExecutor = require("./test-executor");
 const ActionHandler = require("../actions/action-handler");
 const ReportGenerator = require("../reporting/report-generator");
-const { YamlValidator, ValidationError } = require("../validators/yaml-validator");
+const {
+  YamlValidator,
+  ValidationError,
+} = require("../validators/yaml-validator");
 const fs = require("fs").promises;
 const yaml = require("js-yaml");
 
 /**
  * TestEngine is the main orchestrator for test execution.
  * Supports YAML-based test scenarios with hierarchical execution.
- * 
+ *
  * Usage:
  *   const engine = new TestEngine('./config.yaml');
  *   await engine.initialize();
@@ -59,10 +62,10 @@ class TestEngine {
       [
         this.config.screenshots.successPath,
         this.config.screenshots.failurePath,
-        this.config.screenshots.dialogPath
+        this.config.screenshots.dialogPath,
       ],
       this.config.screenshots.cleanupBeforeRun,
-      (msg) => this.logger.log(msg)
+      (msg) => this.logger.log(msg),
     );
 
     // Initialize browser
@@ -90,7 +93,9 @@ class TestEngine {
       if (yamlPath.endsWith(".yaml") || yamlPath.endsWith(".yml")) {
         await this.runYamlTests(yamlPath);
       } else {
-        throw new Error("Only YAML test files are supported. Please use .yaml or .yml files.");
+        throw new Error(
+          "Only YAML test files are supported. Please use .yaml or .yml files.",
+        );
       }
 
       await this.reportGenerator.generate(this.testResults);
@@ -128,9 +133,11 @@ class TestEngine {
         await this.runYamlScenarioTests(yamlPath);
       }
     } catch (error) {
-      if (error.name === 'ValidationError') {
+      if (error.name === "ValidationError") {
         this.logger.logError("❌ YAML Validation Failed", error);
-        this.logger.log("\nPlease fix the errors in your YAML file before running tests.");
+        this.logger.log(
+          "\nPlease fix the errors in your YAML file before running tests.",
+        );
         if (error.field) {
           this.logger.log(`Field: ${error.field}`);
         }
@@ -202,13 +209,13 @@ class TestEngine {
       const result = await this.executeTestCase(
         testNode.scenario,
         level,
-        skipNavigation
+        skipNavigation,
       );
 
       if (result.status !== "passed") {
         testPassed = false;
         this.logger.log(
-          `${indent}  ✗ Test node "${testName}" failed - skipping child tests`
+          `${indent}  ✗ Test node "${testName}" failed - skipping child tests`,
         );
         return false;
       }
@@ -219,9 +226,9 @@ class TestEngine {
       // Even if execution throws, ensure a failure record exists
       this.logger.logError(
         `${indent}  Failed to execute test: ${testName}`,
-        error
+        error,
       );
-      
+
       // Capture failure screenshot
       const screenshots = [];
       if (this.config.screenshots?.captureOnFailure) {
@@ -229,23 +236,28 @@ class TestEngine {
           const page = this.browserManager.getPage();
           const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
           const filename = `${testName.replace(/\s+/g, "_")}_failure_${timestamp}.png`;
-          const fullPath = require('path').join(this.config.screenshots.failurePath, filename);
-          
+          const fullPath = require("path").join(
+            this.config.screenshots.failurePath,
+            filename,
+          );
+
           await page.screenshot({
             path: fullPath,
             fullPage: this.config.screenshots.fullPage,
             timeout: this.config.execution.actionTimeout || 30000,
           });
-          
+
           screenshots.push(fullPath);
           this.logger.log(`${indent}  📸 Screenshot saved: ${fullPath}`);
         } catch (screenshotError) {
-          this.logger.log(`${indent}  ⚠️  Failed to capture failure screenshot: ${screenshotError.message}`);
+          this.logger.log(
+            `${indent}  ⚠️  Failed to capture failure screenshot: ${screenshotError.message}`,
+          );
         }
       }
-      
+
       // Find if result was already added by executeTestCase
-      const existingResult = this.testResults.find(r => r.name === testName);
+      const existingResult = this.testResults.find((r) => r.name === testName);
       if (existingResult) {
         // Add screenshots to existing result
         existingResult.screenshots.push(...screenshots);
@@ -258,26 +270,26 @@ class TestEngine {
           screenshots: screenshots,
         });
       }
-      
+
       return false;
     }
 
     // Execute child tests
     if (testPassed && testNode.children && testNode.children.length > 0) {
       this.logger.log(
-        `${indent}  → Executing ${testNode.children.length} child test(s)...`
+        `${indent}  → Executing ${testNode.children.length} child test(s)...`,
       );
 
       for (const childTest of testNode.children) {
         const childPassed = await this.executeYamlTestNode(
           childTest,
           level + 1,
-          true
+          true,
         );
 
         if (!childPassed && this.config.execution.stopOnChildFailure) {
           this.logger.log(
-            `${indent}  ⚠ Child test failed - stopping sibling execution`
+            `${indent}  ⚠ Child test failed - stopping sibling execution`,
           );
           break;
         }
@@ -299,7 +311,7 @@ class TestEngine {
     const result = await this.testExecutor.executeTestCase(
       testCase,
       hierarchyLevel,
-      skipNavigation
+      skipNavigation,
     );
     this.testResults.push(result);
     return result;
@@ -312,7 +324,7 @@ class TestEngine {
    */
   async executeTestCases(testCases) {
     this.logger.log(`Executing ${testCases.length} test case(s)...`);
-    
+
     for (const testCase of testCases) {
       await this.executeTestCase(testCase);
     }

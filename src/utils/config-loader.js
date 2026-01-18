@@ -18,7 +18,9 @@ class ConfigLoader {
       const config = yaml.load(configFile);
       return ConfigLoader.applyDefaults(config);
     } catch (error) {
-      throw new Error(`Failed to load configuration from ${configPath}: ${error.message}`);
+      throw new Error(
+        `Failed to load configuration from ${configPath}: ${error.message}`,
+      );
     }
   }
 
@@ -54,15 +56,19 @@ class ConfigLoader {
         captureAfterSubmit: config.screenshots?.captureAfterSubmit ?? true,
         captureOnFailure: config.screenshots?.captureOnFailure ?? true,
         cleanupBeforeRun: config.screenshots?.cleanupBeforeRun ?? true,
-        successPath: config.screenshots?.successPath ?? "./screenshots/successes",
-        failurePath: config.screenshots?.failurePath ?? "./screenshots/failures",
-        reportPath: config.screenshots?.reportPath ?? "./screenshots",
-        
+        successPath:
+          config.screenshots?.successPath ?? "./results/successes",
+        failurePath:
+          config.screenshots?.failurePath ?? "./results/failures",
+        reportPath: config.screenshots?.reportPath ?? "./results",
+
         // Dialog screenshots under main screenshots config
-        dialogPath: config.screenshots?.dialogPath ?? "./screenshots/dialogs",
+        dialogPath: config.screenshots?.dialogPath ?? "./results/dialogs",
         captureDialogs: config.screenshots?.captureDialogs ?? true,
-        includeDialogTimestamp: config.screenshots?.includeDialogTimestamp ?? true,
-        includeDialogTestName: config.screenshots?.includeDialogTestName ?? true,
+        includeDialogTimestamp:
+          config.screenshots?.includeDialogTimestamp ?? true,
+        includeDialogTestName:
+          config.screenshots?.includeDialogTestName ?? true,
       },
       logging: {
         level: "info",

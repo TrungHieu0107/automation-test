@@ -1,6 +1,6 @@
 // src/actions/actions/select-action.js
 
-const BaseAction = require('./base-action');
+const BaseAction = require("./base-action");
 
 /**
  * Handles select/dropdown actions.
@@ -25,7 +25,7 @@ class SelectAction extends BaseAction {
         this.performSelect(element, step.value, selectBy),
       ]);
       this.logger.log(
-        `${indent}  🔽 Selected "${step.value}" (navigation completed)`
+        `${indent}  🔽 Selected "${step.value}" (navigation completed)`,
       );
 
       if (step.postNavigationWait) {
@@ -41,7 +41,7 @@ class SelectAction extends BaseAction {
       const selectedValue = await element.inputValue();
       if (selectBy === "value" && selectedValue !== step.value) {
         throw new Error(
-          `Select value mismatch: expected "${step.value}" but got "${selectedValue}"`
+          `Select value mismatch: expected "${step.value}" but got "${selectedValue}"`,
         );
       }
     }

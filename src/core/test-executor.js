@@ -10,21 +10,30 @@ class TestExecutor {
     this.page = page;
     this.config = config;
     this.logger = logger;
-    
+
     // Create dependencies if not provided (Dependency Injection)
     if (actionHandler) {
       this.actionHandler = actionHandler;
     } else {
       // Create screenshot dependencies following SOLID principles
-      const ScreenshotManager = require('../screenshots/screenshot-manager');
-      const DialogScreenshotHandler = require('../screenshots/dialog-screenshot-handler');
-      
+      const ScreenshotManager = require("../screenshots/screenshot-manager");
+      const DialogScreenshotHandler = require("../screenshots/dialog-screenshot-handler");
+
       const screenshotManager = new ScreenshotManager(config, logger);
-      const dialogScreenshotHandler = new DialogScreenshotHandler(config, logger, screenshotManager);
-      
+      const dialogScreenshotHandler = new DialogScreenshotHandler(
+        config,
+        logger,
+        screenshotManager,
+      );
+
       // Create ActionHandler with injected dependencies (SOLID-compliant version)
-      const ActionHandler = require('../actions/action-handler');
-      this.actionHandler = new ActionHandler(page, config, logger, dialogScreenshotHandler);
+      const ActionHandler = require("../actions/action-handler");
+      this.actionHandler = new ActionHandler(
+        page,
+        config,
+        logger,
+        dialogScreenshotHandler,
+      );
     }
   }
 
@@ -36,9 +45,9 @@ class TestExecutor {
    * @returns {Promise<object>} Test result object
    */
   async executeTestCase(testCase, hierarchyLevel = 0, skipNavigation = false) {
-    const testName = testCase.name || 'Unnamed Test';
+    const testName = testCase.name || "Unnamed Test";
     const indent = "  ".repeat(hierarchyLevel);
-    
+
     // Set test context for action handler (used in dialog screenshots)
     this.actionHandler.setTestContext(testName);
 
@@ -70,7 +79,7 @@ class TestExecutor {
       // Screenshot before submit
       if (this.config.screenshots.captureBeforeSubmit) {
         testResult.screenshots.push(
-          await this.captureScreenshot(testName, "before-submit")
+          await this.captureScreenshot(testName, "before-submit"),
         );
       }
 
@@ -80,7 +89,7 @@ class TestExecutor {
 
       if (testCase.submit.postSubmitWait) {
         this.logger.log(
-          `${indent}Waiting ${testCase.submit.postSubmitWait}ms after submit...`
+          `${indent}Waiting ${testCase.submit.postSubmitWait}ms after submit...`,
         );
         await this.wait(testCase.submit.postSubmitWait);
       }
@@ -88,14 +97,14 @@ class TestExecutor {
       // Screenshot after submit
       if (this.config.screenshots.captureAfterSubmit) {
         testResult.screenshots.push(
-          await this.captureScreenshot(testName, "after-submit")
+          await this.captureScreenshot(testName, "after-submit"),
         );
       }
 
       // Assertion - support both single and multiple
       if (testCase.assertions && Array.isArray(testCase.assertions)) {
         this.logger.log(
-          `${indent}Executing ${testCase.assertions.length} assertions...`
+          `${indent}Executing ${testCase.assertions.length} assertions...`,
         );
         await this.actionHandler.executeAssertions(testCase.assertions, indent);
       } else if (testCase.assertion) {
@@ -111,12 +120,12 @@ class TestExecutor {
       testResult.status = "failed";
       testResult.error = error.message;
       this.logger.logFailure(
-        `${indent}Test "${testName}" FAILED: ${error.message}`
+        `${indent}Test "${testName}" FAILED: ${error.message}`,
       );
 
       if (this.config.screenshots.captureOnFailure) {
         testResult.screenshots.push(
-          await this.captureScreenshot(testName, "failure", true)
+          await this.captureScreenshot(testName, "failure", true),
         );
       }
 
@@ -139,27 +148,31 @@ class TestExecutor {
    * @param {string} testName - Name of the test
    */
   async collectDialogScreenshots(testResult, testName) {
-    const fs = require('fs').promises;
-    const path = require('path');
-    
+    const fs = require("fs").promises;
+    const path = require("path");
+
     try {
       const dialogsDir = this.config.screenshots.dialogPath;
       const files = await fs.readdir(dialogsDir);
-      
+
       // Filter files that match this test name (sanitized)
-      const safeName = testName.replace(/[^a-zA-Z0-9-_]/g, '_').substring(0, 50);
-      const matchingFiles = files.filter(file => 
-        file.startsWith(safeName) && file.endsWith('.png')
+      const safeName = testName
+        .replace(/[^a-zA-Z0-9-_]/g, "_")
+        .substring(0, 50);
+      const matchingFiles = files.filter(
+        (file) => file.startsWith(safeName) && file.endsWith(".png"),
       );
-      
+
       // Add full paths to test results
       for (const file of matchingFiles) {
         const fullPath = path.join(dialogsDir, file);
         testResult.screenshots.push(fullPath);
       }
-      
+
       if (matchingFiles.length > 0) {
-        this.logger.log(`  📸 Collected ${matchingFiles.length} dialog screenshot(s)`);
+        this.logger.log(
+          `  📸 Collected ${matchingFiles.length} dialog screenshot(s)`,
+        );
       }
     } catch (error) {
       // Directory doesn't exist or other error - just skip
@@ -195,12 +208,12 @@ class TestExecutor {
    */
   async prepareChildTest(indent) {
     this.logger.log(
-      `${indent}Continuing on current page (child test - no navigation)`
+      `${indent}Continuing on current page (child test - no navigation)`,
     );
 
     if (this.config.execution.childTestDelay) {
       this.logger.log(
-        `${indent}  → Waiting ${this.config.execution.childTestDelay}ms before child test...`
+        `${indent}  → Waiting ${this.config.execution.childTestDelay}ms before child test...`,
       );
       await this.wait(this.config.execution.childTestDelay);
     }
@@ -221,7 +234,7 @@ class TestExecutor {
       // Check if this is a click followed by a dialog
       if (step.type === "click" && nextStep && nextStep.type === "dialog") {
         this.logger.log(
-          `${indent}Step ${i + 1}/${steps.length}: ${step.type} - ${step.selector.by}="${step.selector.value}" (will trigger dialog)`
+          `${indent}Step ${i + 1}/${steps.length}: ${step.type} - ${step.selector.by}="${step.selector.value}" (will trigger dialog)`,
         );
 
         await this.actionHandler.executeStepWithDialog(step, nextStep, indent);
@@ -231,7 +244,7 @@ class TestExecutor {
         i++; // Skip the next step since we already handled it
       } else {
         this.logger.log(
-          `${indent}Step ${i + 1}/${steps.length}: ${step.type}${step.selector ? ` - ${step.selector.by}="${step.selector.value}"` : ""}`
+          `${indent}Step ${i + 1}/${steps.length}: ${step.type}${step.selector ? ` - ${step.selector.by}="${step.selector.value}"` : ""}`,
         );
 
         await this.actionHandler.executeStep(step, indent);

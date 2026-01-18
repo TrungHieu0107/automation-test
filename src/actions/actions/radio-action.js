@@ -1,6 +1,6 @@
 // src/actions/actions/radio-action.js
 
-const BaseAction = require('./base-action');
+const BaseAction = require("./base-action");
 
 /**
  * Handles radio button selection.
@@ -43,7 +43,7 @@ class RadioAction extends BaseAction {
       const value = await element.inputValue();
       if (value !== step.value) {
         throw new Error(
-          `Radio value mismatch: expected "${step.value}" but got "${value}"`
+          `Radio value mismatch: expected "${step.value}" but got "${value}"`,
         );
       }
     }

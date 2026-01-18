@@ -1,10 +1,10 @@
 // src/actions/executors/click-action-executor.js
 
-const ActionExecutor = require('./action-executor');
+const ActionExecutor = require("./action-executor");
 
 /**
  * ClickActionExecutor - Handles click actions with optional navigation.
- * 
+ *
  * Responsibility: Click elements and coordinate navigation timing
  */
 class ClickActionExecutor extends ActionExecutor {
@@ -18,13 +18,13 @@ class ClickActionExecutor extends ActionExecutor {
     this.page = page;
   }
 
-  async execute(element, step, indent = '') {
+  async execute(element, step, indent = "") {
     if (step.waitForNavigation) {
       // Wait for both click and navigation
       await Promise.all([
         this.page.waitForNavigation({
           timeout: this.config.execution.navigationTimeout,
-          waitUntil: 'domcontentloaded',
+          waitUntil: "domcontentloaded",
         }),
         element.click({ timeout: this.config.execution.actionTimeout }),
       ]);

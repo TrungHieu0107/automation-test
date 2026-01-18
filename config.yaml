@@ -25,12 +25,12 @@ screenshots:
   captureAfterSubmit: true
   captureOnFailure: true
   fullPage: true
-  successPath: "D:/learn/automation_test/screenshots/successes"
-  failurePath: "D:/learn/automation_test/screenshots/failures"
-  reportPath: "D:/learn/automation_test/screenshots"
-  
+  successPath: "D:/learn/automation_test/results/successes"
+  failurePath: "D:/learn/automation_test/results/failures"
+  reportPath: "D:/learn/automation_test/results"
+
   # Dialog screenshot configuration
-  dialogPath: "D:/learn/automation_test/screenshots/dialogs"
+  dialogPath: "D:/learn/automation_test/results/dialogs"
   captureDialogs: true
   includeDialogTimestamp: true
   includeDialogTestName: true

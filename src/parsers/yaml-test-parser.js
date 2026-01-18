@@ -56,7 +56,6 @@ class YamlTestParser {
   }
 
   parseInputStep(data) {
-    // Smart selector detection
     const selector = this.detectSelector(
       data.field || data.name || data.id || data.selector,
     );
@@ -70,10 +69,8 @@ class YamlTestParser {
   }
 
   parseClickStep(data) {
-    // Handle different click step formats
     let target;
     if (typeof data === "string") {
-      // Simple format: click: "button_name"
       target = data;
     } else if (data.button) {
       target = data.button;
@@ -84,7 +81,6 @@ class YamlTestParser {
     } else if (data.selector) {
       target = data.selector;
     } else {
-      // data itself might be the selector
       target = data;
     }
 
@@ -136,63 +132,131 @@ class YamlTestParser {
     };
   }
 
+  /**
+   * Parse submit section - supports both new step-based and legacy formats
+   */
   parseSubmit(submit) {
     if (!submit) return null;
 
-    const clickStep = {
-      type: "click",
-      selector: this.detectSelector(
-        submit.button || submit.click || submit.selector,
-      ),
-    };
+    // NEW FORMAT: submit.steps array
+    if (submit.steps && Array.isArray(submit.steps)) {
+      return {
+        steps: submit.steps.map((step, index) => this.parseSubmitStep(step, index)),
+        postSubmitWait: this.parseTime(submit.wait_after || submit.waitAfter),
+      };
+    }
 
-    const result = {
-      step: clickStep,
+    // LEGACY FORMAT: Convert to new format for backward compatibility
+    return this.convertLegacySubmit(submit);
+  }
+
+  /**
+   * Parse a single submit step (new format)
+   */
+  parseSubmitStep(step, index) {
+    const stepName = step.name || `Submit Step ${index + 1}`;
+
+    // Handle different step actions
+    switch (step.action) {
+      case 'click':
+        return {
+          name: stepName,
+          action: 'click',
+          selector: this.detectSelector(step.selector || step.button || step.element),
+          capture: step.capture ?? false,
+          wait_after: this.parseTime(step.wait_after)
+        };
+
+      case 'dialog':
+        return {
+          name: stepName,
+          action: 'dialog',
+          dialogType: step.dialogType || 'confirm',
+          dialogAction: step.dialogAction || step.accept === false ? 'dismiss' : 'accept',
+          capture: step.capture ?? false,
+          wait_after: this.parseTime(step.wait_after)
+        };
+
+      case 'input':
+        return {
+          name: stepName,
+          action: 'input',
+          selector: this.detectSelector(step.selector || step.field),
+          value: step.value,
+          capture: step.capture ?? false,
+          wait_after: this.parseTime(step.wait_after)
+        };
+
+      default:
+        throw new Error(`Unknown submit step action: ${step.action}`);
+    }
+  }
+
+  /**
+   * Convert legacy submit format to new step-based format
+   */
+  convertLegacySubmit(submit) {
+    const steps = [];
+
+    // Step 1: Click submit button
+    const clickStep = {
+      name: "Click Submit Button",
+      action: "click",
+      selector: this.detectSelector(
+        submit.button || submit.click || submit.selector
+      ),
+      capture: true, // Always capture for backward compatibility
+    };
+    steps.push(clickStep);
+
+    // Step 2+: Handle dialogs if present
+    if (submit.dialogs && Array.isArray(submit.dialogs)) {
+      submit.dialogs.forEach((dialog, idx) => {
+        let dialogType, dialogAction;
+
+        if (typeof dialog === "string") {
+          // Format: "confirm: accept"
+          const parts = dialog.split(":").map((s) => s.trim());
+          dialogType = parts[0];
+          dialogAction = parts[1] || "accept";
+        } else if (typeof dialog === "object") {
+          if (dialog.dialogType || dialog.action) {
+            // New format: { dialogType: "confirm", action: "accept" }
+            dialogType = dialog.dialogType || "confirm";
+            dialogAction = dialog.action || "accept";
+          } else {
+            // Old format: { confirm: "accept" }
+            dialogType = Object.keys(dialog)[0];
+            dialogAction = dialog[dialogType];
+          }
+        }
+
+        steps.push({
+          name: `Handle ${dialogType} Dialog ${idx + 1}`,
+          action: "dialog",
+          dialogType: dialogType,
+          dialogAction: dialogAction,
+          capture: true, // Always capture dialogs
+          wait_after: dialog.wait_after || dialog.waitAfter,
+        });
+      });
+    } else if (submit.dialog) {
+      // Single dialog
+      steps.push({
+        name: "Handle Dialog",
+        action: "dialog",
+        dialogType: submit.dialog.type || "confirm",
+        dialogAction: submit.dialog.action || "accept",
+        capture: true,
+      });
+    }
+
+    return {
+      steps: steps,
       waitForNavigation:
         submit.wait_for_navigation || submit.waitForNavigation || false,
       postSubmitWait: this.parseTime(submit.wait_after || submit.waitAfter),
     };
-
-    // Handle dialogs
-    if (submit.dialogs && Array.isArray(submit.dialogs)) {
-      result.dialogs = submit.dialogs.map((dialog) => {
-        if (typeof dialog === "string") {
-          // Simple format: "confirm: accept"
-          const parts = dialog.split(":").map((s) => s.trim());
-          return {
-            type: "dialog",
-            dialogType: parts[0],
-            action: parts[1] || "accept",
-          };
-        } else if (typeof dialog === "object") {
-          // Object format - check if it's new format (explicit dialogType/action) or old format (key: value)
-          if (dialog.dialogType || dialog.action) {
-            // New format: { dialogType: "confirm", action: "accept" }
-            return {
-              type: "dialog",
-              dialogType: dialog.dialogType || "confirm",
-              action: dialog.action || "accept",
-            };
-          } else {
-            // Old format: { confirm: "accept" } or { alert: "accept" }
-            const dialogType = Object.keys(dialog)[0];
-            return {
-              type: "dialog",
-              dialogType: dialogType,
-              action: dialog[dialogType],
-            };
-          }
-        }
-      });
-    } else if (submit.dialog) {
-      result.dialog = {
-        type: "dialog",
-        dialogType: submit.dialog.type || "confirm",
-        action: submit.dialog.action || "accept",
-      };
-    }
-
-    return result;
   }
 
   parseVerify(verify) {
@@ -201,7 +265,6 @@ class YamlTestParser {
     return verify
       .map((assertion) => {
         if (typeof assertion === "string") {
-          // Simple text assertion: "Expected message"
           return {
             selector: { by: "id", value: "message" },
             type: "text",
@@ -210,7 +273,6 @@ class YamlTestParser {
         }
 
         if (assertion.message) {
-          // Message assertion
           return {
             selector: { by: "id", value: "message" },
             type: "text",
@@ -219,7 +281,6 @@ class YamlTestParser {
         }
 
         if (assertion.input_value) {
-          // Input value assertion
           return {
             selector: this.detectSelector(assertion.input_value.field),
             type: "input",
@@ -229,11 +290,9 @@ class YamlTestParser {
         }
 
         if (assertion.style) {
-          // Style assertion
           const element = assertion.style.element || assertion.style.selector;
           const selector = this.detectSelector(element);
 
-          // Support multiple style properties
           const styleProps = Object.keys(assertion.style).filter(
             (k) => k !== "element" && k !== "selector",
           );
@@ -250,7 +309,6 @@ class YamlTestParser {
         }
 
         if (assertion.visible !== undefined) {
-          // Visibility assertion
           return {
             selector: this.detectSelector(assertion.visible),
             type: "visible",
@@ -259,7 +317,6 @@ class YamlTestParser {
         }
 
         if (assertion.hidden !== undefined) {
-          // Hidden assertion
           return {
             selector: this.detectSelector(assertion.hidden),
             type: "visible",
@@ -268,7 +325,6 @@ class YamlTestParser {
         }
 
         if (assertion.has_class) {
-          // Class assertion
           return {
             selector: this.detectSelector(assertion.has_class.element),
             type: "class",
@@ -277,7 +333,6 @@ class YamlTestParser {
         }
 
         if (assertion.attribute) {
-          // Attribute assertion
           return {
             selector: this.detectSelector(assertion.attribute.element),
             type: "attribute",
@@ -296,7 +351,6 @@ class YamlTestParser {
    */
   detectSelector(value) {
     if (typeof value === "object" && value.by && value.value) {
-      // Already a selector object
       return value;
     }
 
@@ -304,17 +358,14 @@ class YamlTestParser {
       throw new Error(`Invalid selector: ${value}`);
     }
 
-    // XPath
     if (value.startsWith("/") || value.startsWith("(")) {
       return { by: "xpath", value: value };
     }
 
-    // CSS selector (starts with # . [ or contains space/>,+,~)
     if (value.match(/^[#.\[]/) || value.match(/[\s>+~]/)) {
       return { by: "css", value: value };
     }
 
-    // Default to name attribute
     return { by: "name", value: value };
   }
 

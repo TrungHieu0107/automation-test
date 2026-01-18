@@ -40,14 +40,25 @@ steps:
       wait_for_reload: true
 
 submit:
-  button: confirm
-  dialogs:
-    - dialogType: confirm
-      action: accept
-    - dialogType: confirm
-      action: accept
-  wait_for_navigation: true
-  wait_after: 2000ms
+  submit:
+  steps:  # NEW: Array of steps instead of single action
+    - name: "Click Submit Button"
+      action: click
+      selector: { by: name, value: confirm }
+      capture: true
+      
+    - name: "Handle First Confirm Dialog"
+      action: dialog
+      dialogType: confirm
+      dialogAction: accept
+      capture: true
+      
+    - name: "Handle Second Confirm Dialog"
+      action: dialog
+      dialogType: confirm
+      dialogAction: accept
+      capture: true
+      wait_after: 2000ms
 
 verify:
   - message: "登録処理を行いました。"

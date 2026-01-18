@@ -2,11 +2,11 @@
 
 /**
  * DialogOrchestrator - Orchestrates complex dialog handling workflows.
- * 
+ *
  * Pattern: Orchestrator Pattern
- * - Coordinates multiple operations: listener setup, action execution, 
+ * - Coordinates multiple operations: listener setup, action execution,
  *   dialog handling, screenshot capture, navigation
- * 
+ *
  * Responsibility: Business logic for dialog workflows
  */
 class DialogOrchestrator {
@@ -25,20 +25,20 @@ class DialogOrchestrator {
 
   /**
    * Execute dialog workflow: setup listener, trigger action, handle dialog.
-   * 
+   *
    * @param {Function} triggerAction - Async function that triggers the dialog
    * @param {object} dialogConfig - Dialog configuration {dialogType, action, waitForNavigation}
    * @param {string} stepInfo - Step context for logging/screenshots
    * @param {string} indent - Logging indentation
    * @returns {Promise<string|null>} Screenshot path or null
    */
-  async executeWithDialog(triggerAction, dialogConfig, stepInfo, indent = '') {
+  async executeWithDialog(triggerAction, dialogConfig, stepInfo, indent = "") {
     this.logger.log(
-      `${indent}  🔔 Setting up dialog listener for ${dialogConfig.dialogType} dialog...`
+      `${indent}  🔔 Setting up dialog listener for ${dialogConfig.dialogType} dialog...`,
     );
 
     // Setup dialog listener BEFORE triggering action
-    const dialogPromise = this.page.waitForEvent('dialog', {
+    const dialogPromise = this.page.waitForEvent("dialog", {
       timeout: this.config.execution.actionTimeout,
     });
 
@@ -54,11 +54,11 @@ class DialogOrchestrator {
       try {
         await actionPromise;
         throw new Error(
-          `Expected ${dialogConfig.dialogType} dialog did not appear`
+          `Expected ${dialogConfig.dialogType} dialog did not appear`,
         );
       } catch (actionErr) {
         throw new Error(
-          `Action failed and dialog did not appear: ${actionErr.message}`
+          `Action failed and dialog did not appear: ${actionErr.message}`,
         );
       }
     }
@@ -68,7 +68,7 @@ class DialogOrchestrator {
     // Validate dialog type
     if (dialogConfig.dialogType && dialog.type() !== dialogConfig.dialogType) {
       throw new Error(
-        `Dialog type mismatch: expected "${dialogConfig.dialogType}" but got "${dialog.type()}"`
+        `Dialog type mismatch: expected "${dialogConfig.dialogType}" but got "${dialog.type()}"`,
       );
     }
 
@@ -79,18 +79,18 @@ class DialogOrchestrator {
         dialog,
         this.page,
         stepInfo,
-        ''
+        "",
       );
     }
 
     // Handle dialog
-    const action = dialogConfig.action || 'accept';
+    const action = dialogConfig.action || "accept";
     switch (action) {
-      case 'accept':
+      case "accept":
         await dialog.accept();
         this.logger.log(`${indent}  ✓ Dialog accepted`);
         break;
-      case 'dismiss':
+      case "dismiss":
         await dialog.dismiss();
         this.logger.log(`${indent}  ✗ Dialog dismissed`);
         break;
@@ -100,7 +100,7 @@ class DialogOrchestrator {
 
     // Wait for navigation if configured
     if (dialogConfig.waitForNavigation) {
-      await this.page.waitForLoadState('domcontentloaded', {
+      await this.page.waitForLoadState("domcontentloaded", {
         timeout: this.config.execution.navigationTimeout,
       });
       this.logger.log(`${indent}  ↻ Navigation completed`);
@@ -111,18 +111,25 @@ class DialogOrchestrator {
 
   /**
    * Handle multiple sequential dialogs.
-   * 
+   *
    * @param {Function} triggerAction - Function that triggers dialogs
    * @param {Array} dialogConfigs - Array of dialog configurations
    * @param {string} stepInfo - Step context
    * @param {string} indent - Logging indentation
    * @returns {Promise<Array<string>>} Array of screenshot paths
    */
-  async executeWithMultipleDialogs(triggerAction, dialogConfigs, stepInfo, indent = '') {
+  async executeWithMultipleDialogs(
+    triggerAction,
+    dialogConfigs,
+    stepInfo,
+    indent = "",
+  ) {
     const screenshots = [];
     const totalDialogs = dialogConfigs.length;
 
-    this.logger.log(`${indent}  🔔 Will handle ${totalDialogs} sequential dialogs...`);
+    this.logger.log(
+      `${indent}  🔔 Will handle ${totalDialogs} sequential dialogs...`,
+    );
 
     let dialogCount = 0;
 
@@ -132,13 +139,16 @@ class DialogOrchestrator {
       dialogCount++;
 
       this.logger.log(
-        `${indent}  🔔 Dialog ${dialogCount}/${totalDialogs} appeared: ${dialog.type()}`
+        `${indent}  🔔 Dialog ${dialogCount}/${totalDialogs} appeared: ${dialog.type()}`,
       );
 
       // Validate dialog type
-      if (dialogConfig.dialogType && dialog.type() !== dialogConfig.dialogType) {
+      if (
+        dialogConfig.dialogType &&
+        dialog.type() !== dialogConfig.dialogType
+      ) {
         throw new Error(
-          `Dialog ${dialogCount} type mismatch: expected "${dialogConfig.dialogType}" but got "${dialog.type()}"`
+          `Dialog ${dialogCount} type mismatch: expected "${dialogConfig.dialogType}" but got "${dialog.type()}"`,
         );
       }
 
@@ -148,7 +158,7 @@ class DialogOrchestrator {
           dialog,
           this.page,
           stepInfo,
-          `dialog-${dialogCount}`
+          `dialog-${dialogCount}`,
         );
         if (screenshot) {
           screenshots.push(screenshot);
@@ -156,17 +166,19 @@ class DialogOrchestrator {
       }
 
       // Handle dialog
-      const action = dialogConfig.action || 'accept';
-      if (action === 'accept') {
+      const action = dialogConfig.action || "accept";
+      if (action === "accept") {
         await dialog.accept();
-      } else if (action === 'dismiss') {
+      } else if (action === "dismiss") {
         await dialog.dismiss();
       }
 
-      this.logger.log(`${indent}  ${action === 'accept' ? '✓' : '✗'} Dialog ${dialogCount} ${action}ed`);
+      this.logger.log(
+        `${indent}  ${action === "accept" ? "✓" : "✗"} Dialog ${dialogCount} ${action}ed`,
+      );
     };
 
-    this.page.on('dialog', dialogHandler);
+    this.page.on("dialog", dialogHandler);
 
     try {
       // Trigger action
@@ -177,7 +189,7 @@ class DialogOrchestrator {
         await this.page.waitForTimeout(100);
       }
     } finally {
-      this.page.off('dialog', dialogHandler);
+      this.page.off("dialog", dialogHandler);
     }
 
     return screenshots;

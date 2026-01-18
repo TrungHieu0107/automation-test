@@ -20,7 +20,7 @@ class BrowserManager {
    */
   async initialize() {
     this.logger.log("Launching Microsoft Edge browser...");
-    
+
     this.browser = await chromium.launch({
       headless: this.config.browser.headless || false,
       channel: "msedge",

@@ -1,6 +1,6 @@
 // src/actions/actions/click-action.js
 
-const BaseAction = require('./base-action');
+const BaseAction = require("./base-action");
 
 /**
  * Handles click actions on elements.
