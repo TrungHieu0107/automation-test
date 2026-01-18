@@ -29,10 +29,7 @@ class ReportGenerator {
       totalTests: testResults.length,
       passed: testResults.filter((t) => t.status === "passed").length,
       failed: testResults.filter((t) => t.status === "failed").length,
-      results: testResults.map(result => ({
-        ...result,
-        screenshots: (result.screenshots || []).filter(path => path != null) // Filter out null/undefined
-      })),
+      results: testResults,
     };
 
     // Generate JSON report
@@ -607,25 +604,11 @@ class ReportGenerator {
                         .replace(/\\/g, "/")
                         .split("/")
                         .pop();
-                      
-                      // Determine screenshot type based on filename
-                      let stage = "Other";
-                      if (filename.includes("before")) {
-                        stage = "Before Submit";
-                      } else if (filename.includes("after")) {
-                        stage = "After Submit";
-                      } else if (filename.includes("failure")) {
-                        stage = "Failure";
-                      } else if (filename.includes("_alert_")) {
-                        stage = "🔔 Alert Dialog";
-                      } else if (filename.includes("_confirm_")) {
-                        stage = "🔔 Confirm Dialog";
-                      } else if (filename.includes("_prompt_")) {
-                        stage = "🔔 Prompt Dialog";
-                      } else if (filename.includes("dialog")) {
-                        stage = "🔔 Dialog";
-                      }
-                      
+                      const stage = filename.includes("before")
+                        ? "Before Submit"
+                        : filename.includes("after")
+                          ? "After Submit"
+                          : "Failure";
                       return `
                       <div class="screenshot-item" onclick="viewImage('${screenshot.replace(/\\/g, "/")}')">
                         <img src="${screenshot.replace(/\\/g, "/")}" alt="${filename}">

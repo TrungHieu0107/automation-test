@@ -14,6 +14,7 @@ steps:
 
   - click:
       button: "search"
+      wait_for_reload: true
 
   - checkbox:
       field: "headItemRows[0].sentaku_cb.value"
@@ -21,7 +22,9 @@ steps:
 
 submit:
   button: "approve"
-  wait_after: "2000ms"
+  dialog:
+    dialogType: "confirm"
+    action: "accept"
 
 verify:
   - message: "更新処理が完了しました。"

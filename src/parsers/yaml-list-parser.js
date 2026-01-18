@@ -1,4 +1,4 @@
-// lib/yaml-list-parser.js
+// src/parsers/yaml-list-parser.js
 const yaml = require("js-yaml");
 const fs = require("fs").promises;
 const path = require("path");
@@ -25,10 +25,9 @@ class YamlListParser {
     const YamlTestParser = require("./yaml-test-parser");
     this.yamlTestParser = new YamlTestParser();
 
-    // Resolve list file path
-    const fullListPath = this.resolveFilePath(listFilePath);
-
-    const content = await fs.readFile(fullListPath, "utf8");
+    // Use the list file path directly (it's provided by the user)
+    // resolveFilePath is only for resolving scenario files referenced WITHIN the list
+    const content = await fs.readFile(listFilePath, "utf8");
     const listData = yaml.load(content);
 
     // Support both formats: test_list and tests

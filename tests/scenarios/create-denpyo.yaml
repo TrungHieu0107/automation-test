@@ -24,6 +24,7 @@ steps:
 
   - click:
       button: search
+      wait_for_reload: true
 
   - input:
       field: itemrow[0].syohin_cd.value
@@ -41,8 +42,10 @@ steps:
 submit:
   button: confirm
   dialogs:
-    - confirm: accept
-    - confirm: accept
+    - dialogType: confirm
+      action: accept
+    - dialogType: confirm
+      action: accept
   wait_for_navigation: true
   wait_after: 2000ms
 

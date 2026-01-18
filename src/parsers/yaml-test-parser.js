@@ -1,4 +1,4 @@
-// lib/yaml-test-parser.js
+// src/parsers/yaml-test-parser.js
 const yaml = require("js-yaml");
 const fs = require("fs").promises;
 
@@ -165,13 +165,23 @@ class YamlTestParser {
             action: parts[1] || "accept",
           };
         } else if (typeof dialog === "object") {
-          // Object format
-          const dialogType = Object.keys(dialog)[0];
-          return {
-            type: "dialog",
-            dialogType: dialogType,
-            action: dialog[dialogType],
-          };
+          // Object format - check if it's new format (explicit dialogType/action) or old format (key: value)
+          if (dialog.dialogType || dialog.action) {
+            // New format: { dialogType: "confirm", action: "accept" }
+            return {
+              type: "dialog",
+              dialogType: dialog.dialogType || "confirm",
+              action: dialog.action || "accept",
+            };
+          } else {
+            // Old format: { confirm: "accept" } or { alert: "accept" }
+            const dialogType = Object.keys(dialog)[0];
+            return {
+              type: "dialog",
+              dialogType: dialogType,
+              action: dialog[dialogType],
+            };
+          }
         }
       });
     } else if (submit.dialog) {

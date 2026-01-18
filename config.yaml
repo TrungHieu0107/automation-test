@@ -11,24 +11,29 @@ browser:
     - "--disable-blink-features=AutomationControlled"
 
 execution:
-  actionTimeout: 30000
-  navigationTimeout: 30000
+  actionTimeout: 10000
+  navigationTimeout: 10000
   pageLoadWait: 1000
   stepDelay: 500
-  stopOnFailure: false
-  stopOnChildFailure: false
-  maxRetries: 3
+  stopOnFailure: true
+  stopOnChildFailure: true
+  maxRetries: 1
 
 screenshots:
   enabled: true
-  fullPage: true
   captureBeforeSubmit: true
   captureAfterSubmit: true
   captureOnFailure: true
-  cleanupBeforeRun: true
-  outputPath: D:/learn/automation_test/screenshots/successes
-  failurePath: D:/learn/automation_test/screenshots/failures
-  reportPath: ./screenshots
+  fullPage: true
+  successPath: "D:/learn/automation_test/screenshots/successes"
+  failurePath: "D:/learn/automation_test/screenshots/failures"
+  reportPath: "D:/learn/automation_test/screenshots"
+  
+  # Dialog screenshot configuration
+  dialogPath: "D:/learn/automation_test/screenshots/dialogs"
+  captureDialogs: true
+  includeDialogTimestamp: true
+  includeDialogTestName: true
 
 logging:
   level: info

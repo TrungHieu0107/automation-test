@@ -1,0 +1,164 @@
+# Comprehensive Scenario Example
+#
+# This example demonstrates ALL supported action types and features.
+# Use this as a reference for advanced test scenarios.
+
+test_name: "Comprehensive Feature Test"
+url: "http://example.com/forms"
+
+steps:
+  # ========================================
+  # INPUT ACTIONS - Fill in text fields
+  # ========================================
+  
+  # Basic input - using field name
+  - input:
+      field: firstName
+      value: "John"
+
+  # Input with explicit selector type
+  - input:
+      selector:
+        by: id  # Options: id, name, css, xpath
+        value: lastName
+      value: "Doe"
+
+  # Input with CSS selector
+  - input:
+      selector:
+        by: css
+        value: "input[data-test='email']"
+      value: "john.doe@example.com"
+
+  # ========================================
+  # CLICK ACTIONS - Click buttons/links
+  # ========================================
+  
+  # Simple click using name
+  - click:
+      button: nextButton
+
+  # Click with XPath
+  - click:
+      selector:
+        by: xpath
+        value: "//button[@class='primary']"
+
+  # ========================================
+  # CHECKBOX ACTIONS - Check/uncheck boxes
+  # ========================================
+  
+  # Check a checkbox
+  - checkbox:
+      field: agreeTerms
+      value: true
+
+  # Uncheck a checkbox
+  - checkbox:
+      field: newsletter
+      value: false
+
+  # ========================================
+  # RADIO BUTTON ACTIONS - Select radio options
+  # ========================================
+  
+  # Select radio button
+  - radio:
+      id: genderMale
+      value: "male"
+      verify: true  # Verify selection after clicking
+
+  # ========================================
+  # SELECT/DROPDOWN ACTIONS - Choose from dropdown
+  # ========================================
+  
+  # Select by value
+  - select:
+      field: country
+      value: "US"
+      select_by: value  # Options: value, label, index
+
+  # Select by visible text (label)
+  - select:
+      field: state
+      value: "California"
+      select_by: label
+
+  # Select by index (0-based)
+  - select:
+      field: city
+      value: "2"
+      select_by: index
+
+# Submit section - How to complete the test
+submit:
+  # Click submit button
+  button: submitForm
+  
+  # Wait for navigation after submit
+  wait_for_navigation: true
+  
+  # Additional wait after page loads
+  wait_after: 1500ms  # Can use "ms" or "s": 1500ms = 1.5s
+
+# Verify section - Multiple assertion types
+verify:
+  # 1. Simple message assertion
+  - message: "Form submitted successfully"
+
+  # 2. Input value verification
+  - input_value:
+      field: confirmationNumber
+      equals: "12345"
+
+  # 3. Element visibility check
+  - visible: successBanner
+
+  # 4. Element hidden check
+  - hidden: errorMessage
+
+  # 5. Style/CSS veri fication
+  - style:
+      element: successBanner
+      backgroundColor: green
+      color: white
+
+  # 6. Attribute verification
+  - attribute:
+      element: confirmButton
+      name: disabled
+      value: "true"
+
+  # 7. Class verification
+  - has_class:
+      element: statusIcon
+      class: success-icon
+
+# ==================================================
+# ADVANCED FEATURES AND TIPS
+# ==================================================
+#
+# 1. SELECTOR STRATEGIES:
+#    - Use 'id' when elements have unique IDs (fastest)
+#    - Use 'name' for form elements
+#    - Use 'css' for complex selections
+#    - Use 'xpath' when no other option works
+#
+# 2. WAIT STRATEGIES:
+#    - Use wait_after for slow-loading pages
+#    - Use wait_for_navigation when page reloads
+#    - Add wait_for_reload to steps that trigger page refresh
+#
+# 3. BEST PRACTICES:
+#    - Keep test names descriptive
+#    - Group related actions together
+#    - Add comments for complex logic
+#    - Use consistent selector strategies
+#    - Verify critical assertions only
+#
+# 4. COMMON PATTERNS:
+#    - Login → Navigate → Fill Form → Submit → Verify
+#    - Search → Filter → Select → Action → Verify
+#    - Create → Edit → Delete → Verify
+#
+# ==================================================
